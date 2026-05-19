@@ -1,0 +1,45 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.bak
+*.log
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code workspace state. Keep this commented if you decide to share tasks/launch config.
+.vscode/
+
+# Flutter/Dart generated files
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub-cache/
+**/.pub/
+**/build/
+**/coverage/
+**/doc/api/
+
+# Android generated/local files
+**/android/local.properties
+**/android/.gradle/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+
+# iOS/macOS generated files
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/ephemeral/
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/macos/Flutter/ephemeral/
+
+# Desktop build intermediates
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/

@@ -1,0 +1,42 @@
+Notes for evaluation:
+
+mobileModule00
+
+ex00:
+
+Read below for VM setup constraint, and my work around for evaluation demo.
+
+1) No USB passthrough
+    - Therefore, I cannot connect phone to the VM by USB
+    - Without USB + ADB working, I cannot run flutter app directly on the phone, therefore, 
+    - I cannot display “Button pressed” in the debug console, while running flutter app in phone.
+
+    - The work around, which still satisfies both requirements.
+    - Demonstrate 'debug console' by running flutter app in web-server 
+        > make web-server
+          (Inspect in browser - F12, Console Tab)
+        > note I use --release flag to avoid websocket error
+
+    - Seperately also run the app in the phone, by downloading app into the phone.
+        > make apk
+        > find file in 
+            build/app/outputs/flutter-apk/app-release.apk
+        > upload app-release.apk to Google Drive
+        > download from Google Drive in phone
+
+2) Android wireless debugging over Wi-Fi with QR pairing, is not possible
+    - Android's doc require the development computer and device to be on the same wireless network.
+    - (How to find phone-ip? Phone's Wireless debugging page/ Pair device with pairing code)
+    - But I am unable to ping <phone-ip> from VM
+    - Without it, I am unable to adb pair ip:pairing-port from VM
+    - Network is blocking Wi-fi debugging
+    - Therefore wireless debugging  over Wi-Fi with QR pairing is not possible.
+
+3) What about Expo / Expo Go, is React Native tool, not part of Flutter development workflow.
+    - Expo QR = open the React Native app on the phone from the dev server
+    - ADB QR pairing = connect the phone to the computer for Android debugging
+    - Therefore this option is rules out.
+    
+ex01:
+
+
