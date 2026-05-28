@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="phoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34495e"/>
+      <stop offset="100%" stop-color="#2c3e50"/>
+    </linearGradient>
+    <linearGradient id="hostGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2980b9"/>
+      <stop offset="100%" stop-color="#2c3e50"/>
+    </linearGradient>
+    <linearGradient id="vmmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#27ae60"/>
+      <stop offset="100%" stop-color="#1e7e34"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7f8c8d"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#27ae60"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="560" fill="#f8fafc" rx="16"/>
+  
+  <text x="30" y="40" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="800" fill="#0f172a">Android USB Passthrough Architecture Workflow</text>
+  <text x="30" y="60" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="500" fill="#64748b">Sequential chronological user interaction map tracking hardware boundary crossing</text>
+
+  <g transform="translate(30, 90)">
+    <rect width="260" height="430" rx="12" fill="url(#phoneGrad)" stroke="#1e293b" stroke-width="2"/>
+    <rect x="10" y="10" width="240" height="410" rx="8" fill="#1e293b"/>
+    
+    <text x="130" y="35" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">1. Physical Device</text>
+    <text x="130" y="52" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#94a3b8" text-anchor="middle">Samsung Galaxy Hardware</text>
+
+    <g transform="translate(15, 75)">
+      <rect width="210" height="65" rx="6" fill="#2d3748" stroke="#4a5568"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#38bdf8">STEP 1 (Hardware Connection)</text>
+      <text x="12" y="40" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">Plug USB Cable into Host</text>
+      <text x="12" y="55" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="500" fill="#94a3b8">Establishes electrical link</text>
+    </g>
+
+    <g transform="translate(15, 155)">
+      <rect width="210" height="110" rx="6" fill="#2d3748" stroke="#4a5568"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#f59e0b">STEPS 8-10 (Device UI)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e2e8f0">• Set Mode: File Transfer / MTP</text>
+      <text x="12" y="60" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e2e8f0">• Revoke Old Authorizations</text>
+      <text x="12" y="78" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e2e8f0">• Cycle USB Debugging: OFF→ON</text>
+      <text x="12" y="96" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="500" fill="#94a3b8">Refreshes RSA keys on phone</text>
+    </g>
+
+    <g transform="translate(15, 280)">
+      <rect width="210" height="85" rx="6" fill="#14532d" stroke="#16a34a"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#4ade80">STEP 14 (Device UI Prompt)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">"Allow USB Debugging?"</text>
+      <text x="12" y="58" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="500" fill="#cbd5e1">Check: Always allow</text>
+      <text x="12" y="74" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#4ade80">➔ Tap: ALLOW</text>
+    </g>
+  </g>
+
+  <g transform="translate(365, 90)">
+    <rect width="260" height="430" rx="12" fill="url(#hostGrad)" stroke="#1d4ed8" stroke-width="2"/>
+    <rect x="10" y="10" width="240" height="410" rx="8" fill="#1e3a8a"/>
+
+    <text x="130" y="35" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">2. Host Machine</text>
+    <text x="130" y="52" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#93c5fd" text-anchor="middle">Linux Physical Workstation</text>
+
+    <g transform="translate(15, 75)">
+      <rect width="210" height="80" rx="6" fill="#1e293b" stroke="#3b82f6"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#60a5fa">STEPS 2-3 (Terminal / UI)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#ffffff">$ lsusb → Verify hardware</text>
+      <text x="12" y="60" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#fca5a5">Close auto-opened File Mgr</text>
+      <text x="12" y="72" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="500" fill="#94a3b8">Prevents storage sub-locks</text>
+    </g>
+
+    <g transform="translate(15, 170)">
+      <rect width="210" height="95" rx="6" fill="#7f1d1d" stroke="#ef4444"/>
+      <text x="12" y="20" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#fca5a5">STEPS 4-5 (Terminal / Hw)</text>
+      <text x="12" y="38" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">Kill blocking server locks:</text>
+      <text x="12" y="54" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="500" fill="#fecaca">$ pkill -f gvfsd-mtp</text>
+      <text x="12" y="68" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="500" fill="#fecaca">$ pkill -f adb</text>
+      <text x="12" y="84" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#ffffff">➔ Unplug &amp; Replug Phone</text>
+    </g>
+
+    <g transform="translate(15, 280)">
+      <rect width="210" height="85" rx="6" fill="#1e293b" stroke="#3b82f6"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#60a5fa">STEP 6 (VMM UI Redirection)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#ffffff">Open virt-manager menu:</text>
+      <text x="12" y="58" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="500" fill="#cbd5e1">Virtual Machine ➔ Redirect USB</text>
+      <text x="12" y="74" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#60a5fa">Select Samsung Phone</text>
+    </g>
+  </g>
+
+  <g transform="translate(700, 90)">
+    <rect width="260" height="430" rx="12" fill="url(#vmmGrad)" stroke="#166534" stroke-width="2"/>
+    <rect x="10" y="10" width="240" height="410" rx="8" fill="#14532d"/>
+
+    <text x="130" y="35" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">3. Guest Ubuntu VM</text>
+    <text x="130" y="52" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#bbf7d0" text-anchor="middle">Development Environment</text>
+
+    <g transform="translate(15, 75)">
+      <rect width="210" height="65" rx="6" fill="#1e293b" stroke="#22c55e"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#4ade80">STEP 7 (Guest Terminal)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#ffffff">$ lsusb</text>
+      <text x="12" y="56" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="500" fill="#cbd5e1">Verify phone is visible in VM</text>
+    </g>
+
+    <g transform="translate(15, 155)">
+      <rect width="210" height="110" rx="6" fill="#1e293b" stroke="#22c55e"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#4ade80">STEPS 11-13 (Guest Terminal)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">$ adb kill-server</text>
+      <text x="12" y="58" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">$ adb start-server</text>
+      <text x="12" y="74" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">$ adb devices -l</text>
+      <text x="12" y="92" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#f59e0b">↳ Output: "unauthorized"</text>
+    </g>
+
+    <g transform="translate(15, 280)">
+      <rect width="210" height="95" rx="6" fill="#166534" stroke="#4ade80"/>
+      <text x="12" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#22c55e">STEP 15 (Guest Terminal)</text>
+      <text x="12" y="42" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#ffffff">$ adb devices -l</text>
+      <text x="12" y="58" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700" fill="#4ade80">↳ Output: "device"</text>
+      <text x="12" y="76" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="800" fill="#ffffff">$ flutter run -d R58W123ABC</text>
+    </g>
+  </g>
+
+  <path d="M 290 145 L 365 145" fill="none" stroke="#7f8c8d" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+  <text x="327" y="137" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#64748b" text-anchor="middle">USB Hw</text>
+
+  <path d="M 365 210 L 290 210" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="327" y="202" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="700" fill="#ef4444" text-anchor="middle">Cycle Hw</text>
+
+  <path d="M 625 335 L 690 335" fill="none" stroke="#2980b9" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="657" y="327" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#2980b9" text-anchor="middle">Redirect</text>
+
+  <path d="M 700 220 L 635 220 Q 535 105 250 225" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3" marker-end="url(#arrow)"/>
+  <text x="490" y="155" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#d97706" text-anchor="middle">RSA Auth Challenge Trigger</text>
+
+  <path d="M 240 335 L 325 335 L 325 485 L 690 485" fill="none" stroke="#27ae60" stroke-width="3" marker-end="url(#arrow-green)"/>
+  <text x="507" y="478" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">Authorized Cryptographic Secure Tunnel Active</text>
+
+</svg>

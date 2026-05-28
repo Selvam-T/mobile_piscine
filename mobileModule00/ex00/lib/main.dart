@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
+                // Child 1. I place text in container to style around text
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.deepPurpleAccent[200],
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
+                // Child 2
                 onPressed: printButtonPressed,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
                 child: Text(
@@ -54,7 +56,7 @@ class MyApp extends StatelessWidget {
   }
 
   void printButtonPressed() {
-    debugPrint('Button Pressed');
+    debugPrint('Button pressed');
   }
 }
 

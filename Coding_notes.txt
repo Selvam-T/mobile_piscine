@@ -1,0 +1,22 @@
+Code explained
+--------------
+
+mobileModule01
+Ex00:
+
+- DefaultTabController provides that controller to everything inside its child
+    - TabBar uses it to know: which tab is selected
+    - TabBarView uses it to know: which page to show
+    - TabBar tells the controller
+    - controller tells TabBarView
+    - TabBarView changes page
+
+- TabBarView has 3 children because the BottomAppBar has 3 tabs: Currently, Today, Weekly
+- The Tab and the Text in body appear in the order of code. This gives the sense landing is 'Currently'.
+
+Ex01:
+
+- 'Search' Input Text field uses TextEditingController, which updates the Text field value, and notifies the listeners
+- OnChanged: a function is called to update the new text emtered
+
+- 'Geolocation' Icon uses OnPressed: to call function, to clear 'Search' Text and update new text.

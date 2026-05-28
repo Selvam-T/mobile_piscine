@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  printButtonPressed();
+                  printButtonPressed(); // required
                   // call setState by passing anonymous function that toggles
                   setState(() {
                     isToggled = !isToggled;
@@ -66,6 +66,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void printButtonPressed() {
-    debugPrint('Button Pressed');
+    debugPrint('Button pressed');
   }
 }

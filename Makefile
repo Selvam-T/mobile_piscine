@@ -1,34 +1,45 @@
-# Root-level Makefile for Flutter exercises such as:
+# Root Makefile for Flutter module projects such as:
 #   mobileModule00/ex00
-#   mobileModule00/ex01
+#   mobileModule00/calculator_app
+#   mobileModule01/weather_app
 #
 # Usage examples:
 #   make help
 #   make version
-#   make create APP=ex00     ---> creates mobileModule00/ex00
-#   make pubget APP=ex00     ---> refresh dependencies (ex: after flutter create)
-#   make run APP=ex00        ---> runs ex00 in default device
-#   make chrome APP=ex00     ---> runs ex00 in Chrome
-#   make apk APP=ex00        ---> builds the APK for that exercise
-#   make devices             ---> to see list of recognized devices
-#   make upgrade             ---> update the SDK to the latest version
-#   make analyze APP=ex00    ---> perform static analysis of Dart source code
-#   make doctor              ---> diagnose health of flutter development environment
-#   make format APP=ex00     ---> format all .dart files recursively under that dir
-#   make clean APP=ex00      ---> only when you want to rebuild
+#   make create MODULE_DIR=mobileModule01 APP=weather_app
+#   make pubget MODULE_DIR=mobileModule00 APP=ex00
+#   make run MODULE_DIR=mobileModule00 APP=ex00
+#   make run MODULE_DIR=mobileModule00 APP=ex00 DEVICE=<id>
+#   make chrome MODULE_DIR=mobileModule00 APP=ex00
+#   make apk MODULE_DIR=mobileModule00 APP=calculator_app
+#   make devices
+#   make upgrade
+#   make analyze MODULE_DIR=mobileModule00 APP=ex00
+#   make doctor
+#   make format MODULE_DIR=mobileModule00 APP=ex00
+#   make clean MODULE_DIR=mobileModule00 APP=ex00
 
 # --------------------------------------------------
 # Config
 # --------------------------------------------------
 
-# Exercise folder to target, for example ex00 or ex01.
-APP ?= ex00
+# Folder containing this root Makefile.
+PROJECT_ROOT := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 
-# Parent folder containing all exercise projects.
+# Module folder to target, for example mobileModule00 or mobileModule01.
 MODULE_DIR ?= mobileModule00
 
+# App/project folder inside MODULE_DIR, for example ex00 or weather_app.
+APP ?= ex00
+
+# Optional Flutter device id, for example chrome, linux, or an Android serial.
+DEVICE ?=
+
+# Resolved module path. Absolute MODULE_DIR values are allowed.
+MODULE_PATH := $(if $(filter /%,$(MODULE_DIR)),$(MODULE_DIR),$(PROJECT_ROOT)/$(MODULE_DIR))
+
 # Resolved Flutter app path.
-APP_DIR := $(MODULE_DIR)/$(APP)
+APP_DIR := $(MODULE_PATH)/$(APP)
 
 # Optional format target path inside the app.
 # Default is the common Flutter source folders.
@@ -38,19 +49,20 @@ FORMAT_PATH ?= lib test
 # Helpers
 # --------------------------------------------------
 
-.PHONY: help check version doctor upgrade devices create pubget chrome run clean format analyze apk
+.PHONY: help check version doctor upgrade devices create pubget chrome run web-server clean format analyze apk
 
 help:
-	@echo "Flutter Makefile"
+	@echo "Flutter root Makefile"
 	@echo ""
 	@echo "Usage:"
-	@echo "  make <target> APP=ex00"
+	@echo "  make <target> MODULE_DIR=mobileModule00 APP=ex00"
 	@echo ""
 	@echo "Examples:"
-	@echo "  make create APP=ex00"
-	@echo "  make pubget APP=ex00"
-	@echo "  make chrome APP=ex00"
-	@echo "  make apk APP=ex00"
+	@echo "  make create MODULE_DIR=mobileModule01 APP=weather_app"
+	@echo "  make pubget MODULE_DIR=mobileModule00 APP=ex00"
+	@echo "  make run MODULE_DIR=mobileModule00 APP=ex00 DEVICE=<id>"
+	@echo "  make chrome MODULE_DIR=mobileModule00 APP=ex00"
+	@echo "  make apk MODULE_DIR=mobileModule00 APP=calculator_app"
 	@echo ""
 	@echo "Targets in logical order:"
 	@echo "  version   - Show Flutter version"
@@ -59,7 +71,7 @@ help:
 	@echo "  devices   - List available devices"
 	@echo "  create    - Create a new Flutter project at MODULE_DIR/APP"
 	@echo "  pubget    - Fetch project dependencies"
-	@echo "  run       - Run app with default selected device"
+	@echo "  run       - Run app, optionally with DEVICE=<id>"
 	@echo "  chrome    - Run app on Chrome"
 	@echo "  format    - Format source files"
 	@echo "  analyze   - Run static analysis"
@@ -95,16 +107,16 @@ devices:
 # Project creation
 # --------------------------------------------------
 
-# Create a new Flutter project at MODULE_DIR/APP.
+# Create a new Flutter project at APP inside MODULE_DIR.
 # Example:
-#   make create APP=ex02
+#   make create MODULE_DIR=mobileModule01 APP=weather_app
 #
 # This fails if the folder already exists.
 create:
 	@if [ -e "$(APP_DIR)" ]; then \
 		echo "Error: path already exists: $(APP_DIR)"; \
 	else \
-		mkdir -p "$(MODULE_DIR)"; \
+		mkdir -p "$(MODULE_PATH)"; \
 		flutter create "$(APP_DIR)"; \
 	fi
 
@@ -118,8 +130,8 @@ pubget: check
 
 # Format common source folders by default.
 # Override with:
-#   make format APP=ex00 FORMAT_PATH=lib
-#   make format APP=ex00 FORMAT_PATH="lib test"
+#   make format MODULE_DIR=mobileModule00 APP=ex00 FORMAT_PATH=lib
+#   make format MODULE_DIR=mobileModule00 APP=ex00 FORMAT_PATH="lib test"
 format: check
 	cd "$(APP_DIR)" && dart format $(FORMAT_PATH)
 
@@ -137,8 +149,11 @@ clean: check
 
 # Run with Flutter's default selected device.
 # Useful if only one device is available.
+# Override with:
+#   make run MODULE_DIR=mobileModule00 APP=ex00 DEVICE=chrome
+#   make run MODULE_DIR=mobileModule00 APP=ex00 DEVICE=<android-device-id>
 run: check
-	cd "$(APP_DIR)" && flutter pub get && flutter run
+	cd "$(APP_DIR)" && flutter pub get && flutter run $(if $(DEVICE),-d $(DEVICE),)
 
 # Run on Chrome.
 # Requires Flutter web support and Chrome/Chromium available in the VM.

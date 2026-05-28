@@ -1,42 +1,108 @@
 Notes for evaluation:
 
-mobileModule00
+mobileModule00 - calculator_app
+-------------------------------
 
-ex00:
+ex00: A basic display
 
-Read below for VM setup constraint, and my work around for evaluation demo.
+    - Setup as usb passthrough between Phone - Host - VMM.
+        
+        Refer to USBPassthrough_setup.svg and .md for instructions.
 
-1) No USB passthrough
-    - Therefore, I cannot connect phone to the VM by USB
-    - Without USB + ADB working, I cannot run flutter app directly on the phone, therefore, 
-    - I cannot display “Button pressed” in the debug console, while running flutter app in phone.
+    - find phone device ID, make devices
+    - make run APP=calculator_app DEVICE=R9WWB0HA0EM 
 
-    - The work around, which still satisfies both requirements.
-    - Demonstrate 'debug console' by running flutter app in web-server 
-        > make web-server
-          (Inspect in browser - F12, Console Tab)
-        > note I use --release flag to avoid websocket error
-
-    - Seperately also run the app in the phone, by downloading app into the phone.
-        > make apk
-        > find file in 
-            build/app/outputs/flutter-apk/app-release.apk
-        > upload app-release.apk to Google Drive
-        > download from Google Drive in phone
-
-2) Android wireless debugging over Wi-Fi with QR pairing, is not possible
-    - Android's doc require the development computer and device to be on the same wireless network.
-    - (How to find phone-ip? Phone's Wireless debugging page/ Pair device with pairing code)
-    - But I am unable to ping <phone-ip> from VM
-    - Without it, I am unable to adb pair ip:pairing-port from VM
-    - Network is blocking Wi-fi debugging
-    - Therefore wireless debugging  over Wi-Fi with QR pairing is not possible.
-
-3) What about Expo / Expo Go, is React Native tool, not part of Flutter development workflow.
-    - Expo QR = open the React Native app on the phone from the dev server
-    - ADB QR pairing = connect the phone to the computer for Android debugging
-    - Therefore this option is rules out.
+    - Flutter project name - ex00
     
 ex01:
+    - continues to ex00 code
+    - addition: press button toggles text display
+    - debugPrint is left as it is in ex00
+
+    - Use StatefulWidget only when the widget needs to manage changing values itself.
+    - Use StatelessWidget when they do not store changing data inside themselves.
+
+ex02: More Buttons
+
+    - display an AppBar - “Calculator”
+    - add two TextFields (1.expression and 2.result) --> hardcode "0"
+    - Number buttons 
+        - 0 - 9
+        - “.”
+        - “AC”
+        - “C”
+        - “=”
+        - “+”, “-”, “*”, “/”
+    - display pressed text in the debug console
+
+    Coding decision:
+    - Made the body fill the full screen width with width: double.infinity.
+    - Used a 5-column button grid with GridView.builder.
+    - GridView.builder:crossAxisCount: 5 tells Flutter to break every row strictly after 5 elements.
+        - It holds exactly 20 grid elements. Therefore 20 / 5 = 4 rows.
+    - Used LayoutBuilder to calculate button aspect ratio so all keypad rows fit on Chrome/web
+
+ex03:
+
+    - built on ex02, made operational
+    - "AC" clear whole expression, show 0
+    - "C" clear last character, if none show 0
+            - not clear last number. Ex: 10 + 20 --> clear 0, not 20
+    - "." a) multiple . is invalid, b) correct format example 0.6
+    - "=" :
+        a) If the next key after = is an operator, treat the result as the new starting value.
+            663 + 5 =
+            Result: 668
+            Next key: +
+
+            Expression: 668+
+            Result: 668
+
+        b) If the next key after = is an operand/number, a normal calculator starts a new expression.
+            663 + 5 =
+            Result: 668
+            Next key: 9
+
+            Expression: 9
+            Result: 668
+    - Division by 0, return Error ✅
+
+    - "-" as subtractor vs unary negative sign ✅
+        - if preceded by operator, then "-" is unary sign
+            5 - 3 = 2
+        - if preceded by operand, then "-" is operator
+            5 - - 3 = 8
+    
+    - Handle very large numbers without crash. ✅
+        Instead of overflowing, rounding badly, or turning into misleading output,
+        show 'Too Large'
+
+        static const double _maxResultMagnitude = 1000000000000;
 
 
+mobileModule01 - weather_app
+----------------------------
+
+Because both exercises say: Files to turn in: weather_app and all necessary files,
+For Module 01, that wording means one project: weather_app
+
+ex00: BottomBar
+    - create a new project called weather_app. ✅
+    - create the structure / with components
+        - AppBar -> a. search TextField, b. geolocation button. ✅
+        - A BottomBar 3 tabs: ✅
+            - Each tab -> name + icon (Currently, Today, Weekly) ✅
+        - switch between tabs 
+            - by a. clicking ✅ b. swiping ❌  c. both ❌ 
+            - switch tabs - content of the page should change (the name of the tab only) ✅
+        
+        - I have used Flutter - TabBar, TabBarView, BottomAppBar as in PDF ✅
+            - Use TabBar + TabBarView for the 3 bottom sections ❌ 
+        
+        - Application starts - landing tab (Currently) ✅
+
+ex01: TopBar
+    - According to PDF
+    - a) search Icon + search TextField + (hint text) b) a vertical bar c) geolocation Icon
+    - If Search is selected, display text entered in TextField + Tab selected
+    - If geolocation button is selected, display word 'Geolocation' + Tab selected
