@@ -63,3 +63,25 @@ Ex01:
 5)  Fetch weather data
     - fetchCurrentWeather()
     - Selected city trigger weather API call using its latitude and longitude.
+
+Ex02:
+
+1) Open-Meteo Weather Forecast API. 
+    This API returns weather data like: temperature, weather code, wind speed
+2) cityLabel() to format city information - shared by 3 tabs
+3) weatherDescription() to map weather code to description.
+
+4) HourlyForecast model, todayForecast state, selectedLocationText state
+5) fetchTodayWeather(), buildTodayContent()
+
+6) CurrentForecast, DailyForecast, weeklyForecast state
+7) fetchWeeklyWeather(), buildWeeklyContent()
+
+8) reverseGeocodeLocation() reverse-geocodes coordinates into city information
+
+9) Landing tab is "currently" - TabController - nitialIndex: 0
+
+10) applySearchedLocation()- global “last searched coordinate” model. 
+    so switching tabs keeps showing the last searched location’s data.
+
+11) showErrorMessage() - Shared error state wired into all tabs.

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:medium_weather_app/main.dart';
 
 void main() {
-  testWidgets('Weather app shell updates tab content from search', (
+  testWidgets('Weather app shell shows search, geolocation, and tabs', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MyApp());
@@ -14,10 +14,5 @@ void main() {
     expect(find.text('Currently'), findsWidgets);
     expect(find.text('Today'), findsWidgets);
     expect(find.text('Weekly'), findsWidgets);
-
-    await tester.enterText(find.byType(TextField), 'Singapore');
-    await tester.pump();
-
-    expect(find.text('Currently\nSingapore'), findsOneWidget);
   });
 }

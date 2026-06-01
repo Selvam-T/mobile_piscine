@@ -146,7 +146,53 @@ ex01:
     - 3. User search without selecting city? 
         - I presume this mean, refresh the dynamic list. ✅
 
-ex02: ❌
-    - populate views with data
+ex02:
+    - populate views with data (use Weather Forecast API from Open-Meteo)
 
     - Current
+        location, temperature (C*), weather , wind speed ✅
+
+    - Today
+        location, hour (00:00), hourly breakdown of temp, weather, wind ✅
+
+    - Weekly
+        location, date (yyyy-mm-dd), each day of week min temp, max temp, weather, (no wind) ✅
+    
+    - landing tab "Currently" ✅
+
+    - search should remain in same tab ✅
+
+    - When switching tabs, always display the data from the last search. ✅
+      (means last search applies to all tabs, no matter what tab you searched from).
+
+    - It does not say what view should be like for 'geolocation', it is safe to assume same as 'search'.
+
+    - Placed a vertical scrollbar as in the PDF, so columns in tab don't look scrambled.
+      But this takes away swipe effect between tabs. This is expected flutter gesture conflict.
+      I didn't add vertical scrollbar in "Currently" tab to demo swipe between tabs. ✅
+
+ex03: 
+
+    - Account for user enters invalid city name  ✅
+        - inform user city name is invalid "could not find any result for the supplied coordinates"
+        - message remain visible until user enter valid city
+    - Connection to API fails  ✅
+        - inform user of connection issue "The service connection is lost, please check your internet connection or try again later".
+        -  message remain visible until connection is restored
+
+Complete TEst
+-------------
+1. Invalid city name
+2. No internet / API connection failure
+    - Turn off wifi or data
+3. GPS permission denied
+    - Revoke location permission in Android settings
+4. GPS permission granted
+5. Search while on each tab
+6. Switch tabs after search
+7. City suggestion selection
+8. Search without selecting suggestion
+    - Type Singapore, Press Keyboard search
+9. App launch tab
+
+❌
