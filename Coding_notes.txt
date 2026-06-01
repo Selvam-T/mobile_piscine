@@ -2,6 +2,7 @@ Code explained
 --------------
 
 mobileModule01
+--------------
 Ex00:
 
 - DefaultTabController provides that controller to everything inside its child
@@ -20,3 +21,45 @@ Ex01:
 - OnChanged: a function is called to update the new text emtered
 
 - 'Geolocation' Icon uses OnPressed: to call function, to clear 'Search' Text and update new text.
+
+mobileModule02
+--------------
+Ex00:
+
+- 1. API : Add http to pubspec.yaml for Open-Meteo API calls.
+- 2. GPS : Add geolocator to pubspec.yamlfor phone GPS and runtime permission handling.
+- 3. permissions : Add <uses-permission> to AndroidManifest.xml
+        - So Android knows that the app may request location access.
+        - import 'package:geolocator/geolocator.dart';
+        - useGeoLocation()
+
+- weather logic:
+import 'package:http/http.dart' as http;
+        - searchLocation()
+
+1)  Search city name -> Open-Meteo Geocoding API used to get coordinates
+    Geolocation icon -> Android GPS via geolocator used to get coordinates
+2)  User taps geolocation icon - App calls Geolocator.requestPermission()
+3)  Android shows the real system permission dialog
+4)  If user allows, app can call GPS.
+5)  If user denies, app shows your message.
+
+Ex01:
+
+1)  Add city suggestion State
+    - List - name, admin1 / region, country, latitude, longitude
+    - Class CitySuggestion()
+
+2)  Update search dynamically
+    - onChanged: searchCitySuggestions
+
+3)  Display suggestion list
+    - buildCitySuggestions()
+    - Not required, but Shows a progress bar while Open-Meteo search is running
+
+4)  Handle city selection
+    - selectCitySuggestion()
+
+5)  Fetch weather data
+    - fetchCurrentWeather()
+    - Selected city trigger weather API call using its latitude and longitude.

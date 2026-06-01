@@ -93,16 +93,60 @@ ex00: BottomBar
         - A BottomBar 3 tabs: ✅
             - Each tab -> name + icon (Currently, Today, Weekly) ✅
         - switch between tabs 
-            - by a. clicking ✅ b. swiping ❌  c. both ❌ 
+            - by a. clicking ✅ b. swiping (side to side) ✅ c. both  ✅
             - switch tabs - content of the page should change (the name of the tab only) ✅
         
         - I have used Flutter - TabBar, TabBarView, BottomAppBar as in PDF ✅
-            - Use TabBar + TabBarView for the 3 bottom sections ❌ 
+            - Use TabBar + TabBarView for the 3 bottom sections ✅
         
         - Application starts - landing tab (Currently) ✅
 
 ex01: TopBar
     - According to PDF
-    - a) search Icon + search TextField + (hint text) b) a vertical bar c) geolocation Icon
-    - If Search is selected, display text entered in TextField + Tab selected
-    - If geolocation button is selected, display word 'Geolocation' + Tab selected
+    - a) search Icon + search TextField + (hint text) b) a vertical bar c) geolocation Icon ✅
+    - If Search is selected, display text entered in TextField + Tab selected ✅
+    - If geolocation button is selected, display word 'Geolocation' + Tab selected ✅
+
+mobileModule02 - medium_weather_app
+-----------------------------------
+    
+ex00:
+    Prepare:
+    - A Geocoding API converts between place names and coordinates (Open-Meteo Geocoding API)
+    - A Weather API gives weather data using coordinates (Open-Meteo Geocoding API)
+    - geolocation package -> talks to Android/phone GPS hardware
+        - requests location permission
+        - retrieves latitude and longitude
+    
+    - 1) User clicks geolocation button :
+            -   a) Ask for permission to retrieve and use their location. ✅
+            -   b) Permission: Yes - Use the device’s GPS to get the coordinates and display Tab Name + coordinates
+                    - trigger geocoding on keyboard submit rather than on every keystroke.
+                    - search/submit action calls Open-Meteo:
+                    - If found display coordinates ✅
+                    - If not found display error msg. ✅
+            -   c) Permission: No - display message "Geolocation is not available. Please enable that in your App settings.", ✅
+                                  - but allow search field ✅
+    - How to prove device GPS is used to obtain coordinates of geolocation?
+        Turn off internet, keep GPS/location on, Tap the geolocation icon, displays coordinates ✅
+        Consequently, Search should fail without internet ✅
+    
+    - Ignore Kotlin Gradle warning on console. warning is future-facing.
+
+ex01: 
+    - is mostly about city search + suggestion list + selecting the correct city.
+
+    Behavior:
+    - 1. Search Bar: User type
+        - Update display list dynamically ✅
+        - City Name, City Region, Country ✅
+    - 2. User select city: 
+        - Open-Meteo to get coordinates from city names ✅
+        - Fetch weather for coordinates ✅
+    - 3. User search without selecting city? 
+        - I presume this mean, refresh the dynamic list. ✅
+
+ex02: ❌
+    - populate views with data
+
+    - Current
