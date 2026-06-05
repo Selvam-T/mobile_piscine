@@ -114,3 +114,13 @@ Ex02:
 - I use built-in outlined Material icons
 - styledLocationText() - font color for location
 - IconData weatherIcon() - weather Icon selection depending on text
+
+Ex03:
+
+- HourlyTemperatureChart / HourlyTemperatureChartPainter() --> block 1
+- hourlyForecastRow() --> block 2 
+
+Ex04:
+
+- WeeklyTemperatureChart / WeeklyTemperatureChartPainter() --> block 1
+- WeeklyForecastRow() --> block 2 

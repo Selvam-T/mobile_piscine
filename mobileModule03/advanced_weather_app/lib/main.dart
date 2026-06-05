@@ -93,6 +93,346 @@ class DailyForecast {
   final String description;
 }
 
+class HourlyTemperatureChart extends StatelessWidget {
+  const HourlyTemperatureChart({super.key, required this.forecast});
+
+  final List<HourlyForecast> forecast;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: HourlyTemperatureChartPainter(forecast),
+      child: const SizedBox.expand(),
+    );
+  }
+}
+
+class HourlyTemperatureChartPainter extends CustomPainter {
+  const HourlyTemperatureChartPainter(this.forecast);
+
+  final List<HourlyForecast> forecast;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (forecast.isEmpty) {
+      return;
+    }
+
+    const double leftPadding = 44;
+    const double rightPadding = 12;
+    const double topPadding = 18;
+    const double bottomPadding = 36;
+    final double chartWidth = size.width - leftPadding - rightPadding;
+    final double chartHeight = size.height - topPadding - bottomPadding;
+
+    double minTemperature = forecast.first.temperature;
+    double maxTemperature = forecast.first.temperature;
+
+    for (final HourlyForecast point in forecast) {
+      if (point.temperature < minTemperature) {
+        minTemperature = point.temperature;
+      }
+      if (point.temperature > maxTemperature) {
+        maxTemperature = point.temperature;
+      }
+    }
+
+    int axisMin = minTemperature.floor();
+    int axisMax = maxTemperature.ceil();
+
+    if (axisMax - axisMin < 2) {
+      axisMax = axisMin + 2;
+    }
+
+    if ((axisMax - axisMin).isOdd) {
+      axisMax += 1;
+    }
+
+    final Paint borderPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    final Paint gridPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.16)
+      ..strokeWidth = 1;
+    final Paint linePaint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+    final Paint pointPaint = Paint()..color = Colors.blue;
+    final TextPainter textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    final Offset yAxisBottom = Offset(leftPadding, topPadding + chartHeight);
+    final Offset xAxisEnd = Offset(leftPadding + chartWidth, yAxisBottom.dy);
+    final Rect chartRect = Rect.fromLTWH(
+      leftPadding,
+      topPadding,
+      chartWidth,
+      chartHeight,
+    );
+
+    for (int value = axisMin; value <= axisMax; value += 2) {
+      final double normalizedTemperature =
+          (value - axisMin) / (axisMax - axisMin);
+      final double y =
+          topPadding + chartHeight - normalizedTemperature * chartHeight;
+      canvas.drawLine(
+        Offset(leftPadding, y),
+        Offset(xAxisEnd.dx, y),
+        gridPaint,
+      );
+      textPainter.text = TextSpan(
+        text: '$value C',
+        style: const TextStyle(color: Colors.black, fontSize: 11),
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(4, y - textPainter.height / 2));
+    }
+
+    for (int hour = 0; hour <= 21; hour += 3) {
+      final double x = leftPadding + chartWidth * hour / 23;
+      canvas.drawLine(
+        Offset(x, topPadding),
+        Offset(x, yAxisBottom.dy),
+        gridPaint,
+      );
+    }
+
+    canvas.drawRect(chartRect, borderPaint);
+
+    final Path linePath = Path();
+    for (int index = 0; index < forecast.length; index++) {
+      final double x =
+          leftPadding + (forecast.length == 1 ? 0 : chartWidth * index / 23);
+      final double normalizedTemperature =
+          (forecast[index].temperature - axisMin) / (axisMax - axisMin);
+      final double y =
+          topPadding + chartHeight - normalizedTemperature * chartHeight;
+
+      if (index == 0) {
+        linePath.moveTo(x, y);
+      } else {
+        linePath.lineTo(x, y);
+      }
+
+      canvas.drawCircle(Offset(x, y), 3, pointPaint);
+    }
+
+    canvas.drawPath(linePath, linePaint);
+
+    for (int hour = 0; hour <= 21; hour += 3) {
+      final double x = leftPadding + chartWidth * hour / 23;
+      textPainter.text = TextSpan(
+        text: '${hour.toString().padLeft(2, '0')}:00',
+        style: const TextStyle(color: Colors.black, fontSize: 11),
+      );
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(x - textPainter.width / 2, yAxisBottom.dy + 8),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(HourlyTemperatureChartPainter oldDelegate) {
+    return oldDelegate.forecast != forecast;
+  }
+}
+
+class WeeklyTemperatureChart extends StatelessWidget {
+  const WeeklyTemperatureChart({super.key, required this.forecast});
+
+  final List<DailyForecast> forecast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: CustomPaint(
+            painter: WeeklyTemperatureChartPainter(forecast),
+            child: const SizedBox.expand(),
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.show_chart, color: Colors.red, size: 18),
+            SizedBox(width: 4),
+            Text('Min', style: TextStyle(color: Colors.red)),
+            SizedBox(width: 16),
+            Icon(Icons.show_chart, color: Colors.green, size: 18),
+            SizedBox(width: 4),
+            Text('Max', style: TextStyle(color: Colors.green)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class WeeklyTemperatureChartPainter extends CustomPainter {
+  const WeeklyTemperatureChartPainter(this.forecast);
+
+  final List<DailyForecast> forecast;
+
+  String shortDateLabel(String date) {
+    final DateTime? parsedDate = DateTime.tryParse(date);
+
+    if (parsedDate == null) {
+      return date;
+    }
+
+    return '${parsedDate.day.toString().padLeft(2, '0')}/'
+        '${parsedDate.month.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (forecast.isEmpty) {
+      return;
+    }
+
+    const double leftPadding = 44;
+    const double rightPadding = 12;
+    const double topPadding = 10;
+    const double bottomPadding = 34;
+    final double chartWidth = size.width - leftPadding - rightPadding;
+    final double chartHeight = size.height - topPadding - bottomPadding;
+
+    double minTemperature = forecast.first.minTemperature;
+    double maxTemperature = forecast.first.maxTemperature;
+
+    for (final DailyForecast point in forecast) {
+      if (point.minTemperature < minTemperature) {
+        minTemperature = point.minTemperature;
+      }
+      if (point.maxTemperature > maxTemperature) {
+        maxTemperature = point.maxTemperature;
+      }
+    }
+
+    int axisMin = minTemperature.floor();
+    int axisMax = maxTemperature.ceil();
+
+    if (axisMax - axisMin < 2) {
+      axisMax = axisMin + 2;
+    }
+
+    if ((axisMax - axisMin).isOdd) {
+      axisMax += 1;
+    }
+
+    final Paint borderPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    final Paint gridPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.16)
+      ..strokeWidth = 1;
+    final Paint minLinePaint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+    final Paint maxLinePaint = Paint()
+      ..color = Colors.green
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+    final Paint minPointPaint = Paint()..color = Colors.red;
+    final Paint maxPointPaint = Paint()..color = Colors.green;
+    final TextPainter textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    final Offset yAxisBottom = Offset(leftPadding, topPadding + chartHeight);
+    final Offset xAxisEnd = Offset(leftPadding + chartWidth, yAxisBottom.dy);
+    final Rect chartRect = Rect.fromLTWH(
+      leftPadding,
+      topPadding,
+      chartWidth,
+      chartHeight,
+    );
+
+    for (int value = axisMin; value <= axisMax; value += 2) {
+      final double normalizedTemperature =
+          (value - axisMin) / (axisMax - axisMin);
+      final double y =
+          topPadding + chartHeight - normalizedTemperature * chartHeight;
+      canvas.drawLine(
+        Offset(leftPadding, y),
+        Offset(xAxisEnd.dx, y),
+        gridPaint,
+      );
+      textPainter.text = TextSpan(
+        text: '$value C',
+        style: const TextStyle(color: Colors.black, fontSize: 11),
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(4, y - textPainter.height / 2));
+    }
+
+    final Path minPath = Path();
+    final Path maxPath = Path();
+    for (int index = 0; index < forecast.length; index++) {
+      final double x =
+          leftPadding +
+          (forecast.length == 1
+              ? chartWidth / 2
+              : chartWidth * index / (forecast.length - 1));
+      canvas.drawLine(
+        Offset(x, topPadding),
+        Offset(x, yAxisBottom.dy),
+        gridPaint,
+      );
+
+      final double minNormalized =
+          (forecast[index].minTemperature - axisMin) / (axisMax - axisMin);
+      final double maxNormalized =
+          (forecast[index].maxTemperature - axisMin) / (axisMax - axisMin);
+      final double minY =
+          topPadding + chartHeight - minNormalized * chartHeight;
+      final double maxY =
+          topPadding + chartHeight - maxNormalized * chartHeight;
+
+      if (index == 0) {
+        minPath.moveTo(x, minY);
+        maxPath.moveTo(x, maxY);
+      } else {
+        minPath.lineTo(x, minY);
+        maxPath.lineTo(x, maxY);
+      }
+
+      canvas.drawCircle(Offset(x, minY), 3, minPointPaint);
+      canvas.drawCircle(Offset(x, maxY), 3, maxPointPaint);
+
+      textPainter.text = TextSpan(
+        text: shortDateLabel(forecast[index].date),
+        style: const TextStyle(color: Colors.black, fontSize: 11),
+      );
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(x - textPainter.width / 2, yAxisBottom.dy + 8),
+      );
+    }
+
+    canvas.drawRect(chartRect, borderPaint);
+    canvas.drawPath(minPath, minLinePaint);
+    canvas.drawPath(maxPath, maxLinePaint);
+  }
+
+  @override
+  bool shouldRepaint(WeeklyTemperatureChartPainter oldDelegate) {
+    return oldDelegate.forecast != forecast;
+  }
+}
+
 class _BottomBarState extends State<BottomBar>
     with SingleTickerProviderStateMixin {
   static const String geolocationUnavailableMessage =
@@ -323,6 +663,173 @@ class _BottomBarState extends State<BottomBar>
         ],
       ),
       textAlign: TextAlign.center,
+    );
+  }
+
+  Widget hourlyForecastColumn(HourlyForecast forecast) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      child: SizedBox(
+        width: 104,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(forecast.hour, style: const TextStyle(color: Colors.black)),
+            const SizedBox(height: 8),
+            Icon(
+              weatherIcon(forecast.description),
+              color: weatherIconColor(forecast.description),
+              size: 30,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${forecast.temperature.toStringAsFixed(1)} C',
+              style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            FittedBox(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.air, color: Colors.black, size: 20),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${forecast.windSpeed.toStringAsFixed(1)} km/h',
+                    style: const TextStyle(color: Colors.black),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget hourlyForecastBlock() {
+    return Container(
+      color: Colors.lightBlue.shade100.withValues(alpha: 0.82),
+      child: ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor: WidgetStateProperty.all(Colors.blue),
+          trackColor: WidgetStateProperty.all(
+            Colors.blue.withValues(alpha: 0.16),
+          ),
+        ),
+        child: Scrollbar(
+          controller: todayHorizontalController,
+          thumbVisibility: true,
+          child: ListView.separated(
+            controller: todayHorizontalController,
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            itemCount: todayForecast.length,
+            separatorBuilder: (BuildContext context, int index) {
+              return VerticalDivider(
+                width: 1,
+                color: Colors.black.withValues(alpha: 0.14),
+              );
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return hourlyForecastColumn(todayForecast[index]);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  String shortDateLabel(String date) {
+    final DateTime? parsedDate = DateTime.tryParse(date);
+
+    if (parsedDate == null) {
+      return date;
+    }
+
+    return '${parsedDate.day.toString().padLeft(2, '0')}/'
+        '${parsedDate.month.toString().padLeft(2, '0')}';
+  }
+
+  Widget dailyForecastColumn(DailyForecast forecast) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      child: SizedBox(
+        width: 92,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              shortDateLabel(forecast.date),
+              style: const TextStyle(color: Colors.black),
+            ),
+            const SizedBox(height: 8),
+            Icon(
+              weatherIcon(forecast.description),
+              color: weatherIconColor(forecast.description),
+              size: 30,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${forecast.maxTemperature.toStringAsFixed(1)} C',
+              style: const TextStyle(
+                color: Colors.green,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${forecast.minTemperature.toStringAsFixed(1)} C',
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget weeklyForecastBlock() {
+    return Container(
+      color: Colors.green.shade100.withValues(alpha: 0.82),
+      child: ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor: WidgetStateProperty.all(Colors.blue),
+          trackColor: WidgetStateProperty.all(
+            Colors.blue.withValues(alpha: 0.16),
+          ),
+        ),
+        child: Scrollbar(
+          controller: weeklyHorizontalController,
+          thumbVisibility: true,
+          child: ListView.separated(
+            controller: weeklyHorizontalController,
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            itemCount: weeklyForecast.length,
+            separatorBuilder: (BuildContext context, int index) {
+              return VerticalDivider(
+                width: 1,
+                color: Colors.black.withValues(alpha: 0.14),
+              );
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return dailyForecastColumn(weeklyForecast[index]);
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -1128,49 +1635,29 @@ class _BottomBarState extends State<BottomBar>
       child: Column(
         children: [
           styledLocationText(selectedLocationText),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Scrollbar(
-              controller: todayHorizontalController,
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                controller: todayHorizontalController,
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: 520,
-                  child: ListView(
-                    children: [
-                      for (final HourlyForecast forecast in todayForecast)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 64, child: Text(forecast.hour)),
-                              SizedBox(
-                                width: 88,
-                                child: Text(
-                                  '${forecast.temperature.toStringAsFixed(1)} C',
-                                ),
-                              ),
-                              SizedBox(
-                                width: 112,
-                                child: Text(
-                                  '${forecast.windSpeed.toStringAsFixed(1)} km/h',
-                                ),
-                              ),
-                              SizedBox(
-                                width: 256,
-                                child: Text(forecast.description),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
+          const SizedBox(height: 12),
+          Container(
+            height: 220,
+            padding: const EdgeInsets.all(12),
+            color: Colors.lightBlue.shade50.withValues(alpha: 0.86),
+            child: Column(
+              children: [
+                const Text(
+                  'Today Temperatures',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
+                const SizedBox(height: 6),
+                Expanded(
+                  child: HourlyTemperatureChart(forecast: todayForecast),
+                ),
+              ],
             ),
           ),
+          const SizedBox(height: 12),
+          Expanded(child: hourlyForecastBlock()),
         ],
       ),
     );
@@ -1199,55 +1686,29 @@ class _BottomBarState extends State<BottomBar>
       child: Column(
         children: [
           styledLocationText(selectedLocationText),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Scrollbar(
-              controller: weeklyHorizontalController,
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                controller: weeklyHorizontalController,
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: 620,
-                  child: ListView(
-                    children: [
-                      for (final DailyForecast forecast in weeklyForecast)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 104, child: Text(forecast.date)),
-                              SizedBox(
-                                width: 88,
-                                child: Text(
-                                  '${forecast.minTemperature.toStringAsFixed(1)} C',
-                                ),
-                              ),
-                              SizedBox(
-                                width: 88,
-                                child: Text(
-                                  '${forecast.maxTemperature.toStringAsFixed(1)} C',
-                                ),
-                              ),
-                              SizedBox(
-                                width: 112,
-                                child: Text(
-                                  '${forecast.windSpeed.toStringAsFixed(1)} km/h',
-                                ),
-                              ),
-                              SizedBox(
-                                width: 228,
-                                child: Text(forecast.description),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
+          const SizedBox(height: 12),
+          Container(
+            height: 220,
+            padding: const EdgeInsets.all(12),
+            color: Colors.green.shade50.withValues(alpha: 0.86),
+            child: Column(
+              children: [
+                const Text(
+                  'Weekly Temperatures',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
+                const SizedBox(height: 6),
+                Expanded(
+                  child: WeeklyTemperatureChart(forecast: weeklyForecast),
+                ),
+              ],
             ),
           ),
+          const SizedBox(height: 12),
+          Expanded(child: weeklyForecastBlock()),
         ],
       ),
     );

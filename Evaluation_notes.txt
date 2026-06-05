@@ -216,3 +216,15 @@ Current Tab - clear display of information
     - weather description
     - weather icon
     - wind speed
+
+ex03: Today Tab
+    - location
+    - Temperature curve chart (hours and temp)
+    - A list - time of day, weather icon,  temp,wind speed (scrollable)
+
+ex04: Weekly Tab
+    - location
+    - A chart with two curves: min and max temp
+    - A list - day of week, min and max temp, weather icon (scrollable)
+
+
