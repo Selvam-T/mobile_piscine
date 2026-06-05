@@ -200,14 +200,19 @@ mobileModule03 - advanced_weather_app ❌
 -------------------------------------
    
 ex00: Search Bar
-    - Debug ribbon appears over Geolocation Icon.
-        I did not shift the AppBar down just for debug mode, 
-        because release mode will not have that ribbon.s
+    - Debug Ribbon still appears, the Geolocation icon is moved inwards
     - display suggestions <= 5
     - city name Bold
 
-ex01:
+ex01: Background image
+    - display background image without obstructing text
+    - when switching between tabs the bg image should not change
+    - bg image present behind the whole app content, not duplicated for each tab
 
-ex02:
+ex02: 
 Current Tab - clear display of information
-    - font color, icons for weather
+    - location (city red, rest black)
+    - temperature (blue, big)
+    - weather description
+    - weather icon
+    - wind speed

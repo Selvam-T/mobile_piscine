@@ -100,3 +100,17 @@ Ex00:
 
 - in Widget suggestionTextRow() - highlight the search text
 - in Widget buildCitySuggestions() - add Icons to search results - suggestionTextRow()
+
+Ex01:
+
+- I have placed .jpg image in assets/images folder I created
+- my image ratio is 1.5:1.
+- I will use BoxFit.cover, will make image cover the whole screen, by cropping if necessary
+- To avoid image obstructing the text, I have used overlay, simple to implement.
+
+- body: Stack() contains image and overlay placed before TabBarView
+
+Ex02:
+- I use built-in outlined Material icons
+- styledLocationText() - font color for location
+- IconData weatherIcon() - weather Icon selection depending on text

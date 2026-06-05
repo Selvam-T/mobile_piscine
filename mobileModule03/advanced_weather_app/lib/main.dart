@@ -248,6 +248,84 @@ class _BottomBarState extends State<BottomBar>
     }
   }
 
+  IconData weatherIcon(String description) {
+    switch (description) {
+      case 'Clear sky':
+      case 'Mainly clear':
+        return Icons.wb_sunny_outlined;
+      case 'Partly cloudy':
+      case 'Overcast':
+        return Icons.cloud_outlined;
+      case 'Fog':
+        return Icons.blur_on_outlined;
+      case 'Drizzle':
+      case 'Freezing drizzle':
+      case 'Rain':
+      case 'Freezing rain':
+      case 'Rain showers':
+        return Icons.water_drop_outlined;
+      case 'Snow fall':
+      case 'Snow grains':
+      case 'Snow showers':
+        return Icons.ac_unit_outlined;
+      case 'Thunderstorm':
+      case 'Thunderstorm with hail':
+        return Icons.thunderstorm_outlined;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  Color weatherIconColor(String description) {
+    switch (description) {
+      case 'Clear sky':
+      case 'Mainly clear':
+        return Colors.orange;
+      case 'Partly cloudy':
+      case 'Overcast':
+      case 'Fog':
+        return Colors.blueGrey;
+      case 'Drizzle':
+      case 'Freezing drizzle':
+      case 'Rain':
+      case 'Freezing rain':
+      case 'Rain showers':
+        return Colors.blue;
+      case 'Snow fall':
+      case 'Snow grains':
+      case 'Snow showers':
+        return Colors.lightBlue;
+      case 'Thunderstorm':
+      case 'Thunderstorm with hail':
+        return Colors.deepPurple;
+      default:
+        return Colors.black;
+    }
+  }
+
+  Widget styledLocationText(String locationText) {
+    final List<String> lines = locationText.split('\n');
+    final String city = lines.isEmpty ? locationText : lines.first;
+    final String rest = lines.length > 1 ? lines.skip(1).join(', ') : '';
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: city,
+            style: const TextStyle(color: Colors.red),
+          ),
+          if (rest.isNotEmpty)
+            TextSpan(
+              text: '\n$rest',
+              style: const TextStyle(color: Colors.black),
+            ),
+        ],
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -983,13 +1061,48 @@ class _BottomBarState extends State<BottomBar>
     }
 
     final CurrentForecast forecast = currentForecast!;
-    final String displayText =
-        '$selectedLocationText\n'
-        '${forecast.temperature.toStringAsFixed(1)} C\n'
-        '${forecast.description}\n'
-        'Wind: ${forecast.windSpeed.toStringAsFixed(1)} km/h';
 
-    return Center(child: Text(displayText, textAlign: TextAlign.center));
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          styledLocationText(selectedLocationText),
+          const SizedBox(height: 16),
+          Text(
+            '${forecast.temperature.toStringAsFixed(1)} C',
+            style: const TextStyle(
+              color: Colors.blue,
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            forecast.description,
+            style: const TextStyle(color: Colors.black, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Icon(
+            weatherIcon(forecast.description),
+            color: weatherIconColor(forecast.description),
+            size: 32,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.air, color: Colors.black),
+              const SizedBox(width: 8),
+              Text(
+                '${forecast.windSpeed.toStringAsFixed(1)} km/h',
+                style: const TextStyle(color: Colors.black),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildTodayContent() {
@@ -1014,7 +1127,7 @@ class _BottomBarState extends State<BottomBar>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Text(selectedLocationText, textAlign: TextAlign.center),
+          styledLocationText(selectedLocationText),
           const SizedBox(height: 16),
           Expanded(
             child: Scrollbar(
@@ -1085,7 +1198,7 @@ class _BottomBarState extends State<BottomBar>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Text(selectedLocationText, textAlign: TextAlign.center),
+          styledLocationText(selectedLocationText),
           const SizedBox(height: 16),
           Expanded(
             child: Scrollbar(
@@ -1178,25 +1291,10 @@ class _BottomBarState extends State<BottomBar>
                       horizontal: 16,
                       vertical: 6,
                     ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        suggestionTextRow(
-                          icon: Icons.location_city,
-                          text: suggestion.name,
-                          searchText: searchText,
-                        ),
-                        suggestionTextRow(
-                          icon: Icons.signpost,
-                          text: region,
-                          searchText: searchText,
-                        ),
-                        suggestionTextRow(
-                          icon: Icons.public,
-                          text: country,
-                          searchText: searchText,
-                        ),
-                      ],
+                    title: suggestionTextRow(
+                      icon: Icons.location_city,
+                      text: '${suggestion.name} $region, $country',
+                      searchText: searchText,
                     ),
                     onTap: () {
                       selectCitySuggestion(suggestion);
@@ -1219,21 +1317,33 @@ class _BottomBarState extends State<BottomBar>
         title: Row(
           children: [
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  const Text('Search location'),
-                  TextField(
-                    controller: searchController,
-                    onChanged: (String value) {
-                      searchCitySuggestions(value);
-                    },
-                    onSubmitted: searchLocation,
-                    textInputAction: TextInputAction.search,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
+                  const Icon(Icons.search),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Search location',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        TextField(
+                          controller: searchController,
+                          onChanged: (String value) {
+                            searchCitySuggestions(value);
+                          },
+                          onSubmitted: searchLocation,
+                          style: const TextStyle(fontSize: 20),
+                          textInputAction: TextInputAction.search,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            isDense: true,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1244,22 +1354,33 @@ class _BottomBarState extends State<BottomBar>
               icon: const Icon(Icons.near_me),
               onPressed: useGeolocation,
             ),
+            const SizedBox(width: 48),
           ],
         ),
       ),
 
-      body: Column(
+      body: Stack(
         children: [
-          buildCitySuggestions(),
-          Expanded(
-            child: TabBarView(
-              controller: tabController,
-              children: [
-                buildTabContent('Currently'),
-                buildTodayContent(),
-                buildWeeklyContent(),
-              ],
-            ),
+          Positioned.fill(
+            child: Image.asset('assets/images/weather.jpg', fit: BoxFit.cover),
+          ),
+          Positioned.fill(
+            child: Container(color: Colors.white.withValues(alpha: 0.45)),
+          ),
+          Column(
+            children: [
+              buildCitySuggestions(),
+              Expanded(
+                child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    buildTabContent('Currently'),
+                    buildTodayContent(),
+                    buildWeeklyContent(),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
