@@ -73,7 +73,21 @@ If the phone does not appear in `lsusb`, check:
 
 ---
 
-## 2. Confirm VM has USB support
+## 2. Release user-level host processes
+
+Linux host operating systems automatically mount smartphones as media devices (via MTP/Gvfs) or hook them up to a host-side ADB daemon. Because a USB device can generally only be controlled by one system process at a time, you must kill these host-level processes to "release" the phone's lock.  
+
+On the **host machine**, run:
+
+```bash
+pkill -f gvfsd-mtp
+pkill -f gvfs-mtp-volume-monitor
+pkill -f gvfs-gphoto2-volume-monitor
+pkill -f adb
+```
+---
+
+## 3. Confirm VM has USB support
 
 In Virtual Machine Manager:
 
@@ -98,7 +112,8 @@ SpiceVMC
 This is acceptable. `SpiceVMC` is normal for USB redirection in virt-manager.
 
 ---
-## 3. Pass phone USB device into VM  
+
+## 4. Pass phone USB device into VM  
 
 With the VM running (KVM User session) or shut down, try:  
 
@@ -128,7 +143,7 @@ Finish
 ```  
 ---
 
-## 4. First USB redirection problem
+## 5. First USB redirection problem
 
 From the running VM window (KVM User session):
 
@@ -150,22 +165,7 @@ Meaning:
 The host machine was still holding the phone, usually through MTP / file manager / gvfs / adb.
 ```
 
-Because there was no sudo access on the host, `sudo fuser` could not be used.
-
----
-
-## 5. Fix: release user-level host processes
-
-Kill background processes responsible for how your Linux system communicates with external devices like smartphones.  
-
-On the **host machine**, run:
-
-```bash
-pkill -f gvfsd-mtp
-pkill -f gvfs-mtp-volume-monitor
-pkill -f gvfs-gphoto2-volume-monitor
-pkill -f adb
-```
+Go to step 2. Release user-level host processes
 
 Then:
 
@@ -202,7 +202,6 @@ USB passthrough from host to VM is working.
 ```
 
 At this point, the remaining issue is ADB detection.  
-
 
 ---
 

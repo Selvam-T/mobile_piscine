@@ -85,3 +85,18 @@ Ex02:
     so switching tabs keeps showing the last searched location’s data.
 
 11) showErrorMessage() - Shared error state wired into all tabs.
+
+mobileModule03
+--------------
+We continue to work on the same main.dart from previous module.
+So ensure, you copy/update the dependency list from the previous project’s pubspec.yaml
+- flutter create
+- copy main.dart
+- edit pubspec.yaml, so it contains geocoding, geolocator, http
+- flutter pub get
+- flutter run
+
+Ex00:
+
+- in Widget suggestionTextRow() - highlight the search text
+- in Widget buildCitySuggestions() - add Icons to search results - suggestionTextRow()
