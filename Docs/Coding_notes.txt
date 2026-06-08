@@ -134,6 +134,10 @@ mobileModule04
 
 - setup foundation of application with an authentication system and database
 
+Prompt:
+Create a professional software-development workflow infographic for Flutter developers.
+Make it more "learning-path oriented", where each box represents exactly one Dart/Flutter concept to master before moving on.
+
 ex00: 
 
 - Add Dependencies -
@@ -156,5 +160,22 @@ ex00:
     - refer to firebase_auth_setup.md 
 - NOTE: I did not add iOS Firebase config
 - Enable google & github sign-in + Added SHA Finger print
+
+- lib/services/auth_service.dart -> Firebase Auth logic
+- lib/pages/welcome_page.dart --> UI file
+- lib/pages/login_page.dart --> UI file
+
+- Google and GitHub now use Firebase popup auth:
+    - FirebaseAuth.instance.signInWithPopup(...)
+    - Firebase Auth persists login state
+    - This stream emits User? user --> user != null: someone is signed in
+    - stores uid, email, displayName, photoURL, providerData
+    - do not need to store pwd, tokens, provider secrets or OAuth credentials. (Firebase handles internally)
+
+- auth state decide which page appears- AuthGate or DiaryPage
+
+- When you click Sign out, you clear the Firebase app session. 
+    - But your browser may still be signed into Google or GitHub.
+    - So when you log in again, browser active account is silently reused
 
 ex01: Profile Page

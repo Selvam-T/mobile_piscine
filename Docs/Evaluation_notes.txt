@@ -232,8 +232,20 @@ mobileModule04 - advanced_weather_app ❌
    
 ex00:
 - login button 
-    - 1) redirects to an authentication page (not logged in)
-    - 2) or directly to the diary page (logged in).
-- log in optin  - Google or GitHub account
+    - 1) redirects to an authentication page (not logged in) --> see Auth state management ✅
+    - 2) or directly to the diary page (logged in).--> see Auth state management ✅
 - authentication system to store and manage users.
-    - Firebase, AWS, etc.
+    - Firebase, AWS, etc. ✅
+- log in option  - Google or GitHub account ✅
+- Auth state management and conditional navigation
+    - listen to auth state changes ✅
+    - after login change root page to DidaryPage ✅
+- persistence check, sign out and sigin, Firebase should restore the signed-in user ✅
+
+
+Test edge case:
+    - When google sign in, close popup window, error message should be displayed ✅
+    - disable internet then try login, error message ❌
+    - block popups in browser, popup blocked message ❌
+   
+ex01:
