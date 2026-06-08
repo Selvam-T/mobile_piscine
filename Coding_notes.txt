@@ -124,3 +124,37 @@ Ex04:
 
 - WeeklyTemperatureChart / WeeklyTemperatureChartPainter() --> block 1
 - WeeklyForecastRow() --> block 2 
+
+mobileModule04 
+--------------
+-  diary_app
+- create, read, and delete diary entries
+- authentication system
+- database
+
+- setup foundation of application with an authentication system and database
+
+ex00: 
+
+- Add Dependencies -
+    - Add auth foundation packages now:
+    - flutter pub add firebase_core firebase_auth google_sign_in
+    - install the Firebase CLI 
+    - install the FlutterFire CLI
+    - install a Node-18-compatible Firebase CLI locally in /tmp 
+    - install Firebase CLI 12.9.1 locally
+    - flutter pub get
+
+- Firebase Auth is the auth system we’ll use. 
+    - It will store/manage users, and 
+    - later we’ll enable Google + GitHub providers in Firebase Console.
+- Firebase initialization:
+    - FlutterFire access Firebase online, 
+    - use the Flutter SDK cache, and generate Firebase config files for Android and Web.
+    - Go to firebase, create project, Project name: Diary App
+    - Add Android config, Web Config, (not iOS config)
+    - refer to firebase_auth_setup.md 
+- NOTE: I did not add iOS Firebase config
+- Enable google & github sign-in + Added SHA Finger print
+
+ex01: Profile Page

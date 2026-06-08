@@ -180,7 +180,7 @@ ex03:
         - inform user of connection issue "The service connection is lost, please check your internet connection or try again later".
         -  message remain visible until connection is restored
 
-Complete TEst
+Complete Test
 -------------
 1. Invalid city name
 2. No internet / API connection failure
@@ -196,35 +196,44 @@ Complete TEst
 9. App launch tab
 
 
-mobileModule03 - advanced_weather_app ❌
+mobileModule03 - advanced_weather_app 
 -------------------------------------
    
-ex00: Search Bar
+ex00: Search Bar ✅
     - Debug Ribbon still appears, the Geolocation icon is moved inwards
     - display suggestions <= 5
     - city name Bold
 
-ex01: Background image
+ex01: Background image ✅
     - display background image without obstructing text
     - when switching between tabs the bg image should not change
     - bg image present behind the whole app content, not duplicated for each tab
 
 ex02: 
-Current Tab - clear display of information
+Current Tab - clear display of information ✅
     - location (city red, rest black)
     - temperature (blue, big)
     - weather description
     - weather icon
     - wind speed
 
-ex03: Today Tab
+ex03: Today Tab ✅
     - location
     - Temperature curve chart (hours and temp)
     - A list - time of day, weather icon,  temp,wind speed (scrollable)
 
-ex04: Weekly Tab
+ex04: Weekly Tab ✅
     - location
     - A chart with two curves: min and max temp
     - A list - day of week, min and max temp, weather icon (scrollable)
 
-
+mobileModule04 - advanced_weather_app ❌
+-------------------------------------
+   
+ex00:
+- login button 
+    - 1) redirects to an authentication page (not logged in)
+    - 2) or directly to the diary page (logged in).
+- log in optin  - Google or GitHub account
+- authentication system to store and manage users.
+    - Firebase, AWS, etc.
