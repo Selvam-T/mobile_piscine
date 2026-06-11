@@ -205,11 +205,37 @@ ex01: Profile Page
     - New Diary Entry button is visible, currently placeholder SnackBar
     - Calendar tab is placeholder for later calendar implementation
 
-- Later notes:
-    - Map icon text to display emoticons, for example happy -> smiley face
-    - New Diary Entry page should include dropdown/list of emoticons/icons:
-        - smiley-face -> happy
-        - sad-face -> sad
-    - Clicking New Diary Entry should navigate to the new entry page instead of SnackBar
-    - Clicking an entry should navigate to the detail page instead of SnackBar
-    - Detail page should include a button named "Delete this entry"
+- Step 6 
+    - lib/models/diary_emotion.dart --> shared emotion mapping
+    - Firestore stores emotion text only, use map, Profile page displays emoji
+    - approved emotion values:
+        - happy -> 😊
+        - sad -> 😢
+        - neutral -> 😐
+        - angry -> 😡
+        - tired -> 😴
+        - excited -> 🤩
+        - anxious -> 😰
+        - satisfied -> 🙂
+
+- Step 8 / Step 9:
+    - lib/pages/entry_detail_page.dart --> shows one diary entry
+    - Entry detail shows date, emotion emoji, title, full text
+    - Detail page includes "Delete this entry"
+    - Delete asks for confirmation with AlertDialog
+    - If cancelled, user stays on detail page
+    - If confirmed, DiaryService.deleteEntry() deletes the Firestore document
+    - On success, Navigator returns to the caller and Profile StreamBuilder refreshes the list
+    - Deletion failures show an error message on the detail page
+
+- Step 7:
+    - lib/pages/new_entry_page.dart --> create diary entry form
+    - New Diary Entry button navigates to NewEntryPage
+    - Form fields:
+        - title
+        - emotion dropdown from DiaryEmotion.options
+        - text
+    - App fills uid, usermail, and current Timestamp
+    - Save calls DiaryService.createEntry()
+    - On success, Navigator returns to Profile and Profile StreamBuilder refreshes the list
+    - Save failures show an error message on NewEntryPage

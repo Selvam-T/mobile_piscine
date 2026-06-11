@@ -1,9 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../models/diary_date_formatter.dart';
+import '../models/diary_emotion.dart';
 import '../models/diary_entry.dart';
 import '../services/auth_service.dart';
 import '../services/diary_service.dart';
+import 'entry_detail_page.dart';
+import 'new_entry_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, required this.user});
@@ -178,8 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       itemBuilder: (context, index) {
                         return _DiaryEntryListItem(
                           entry: entries[index],
-                          onTap: () =>
-                              _showEntryDetailPlaceholder(entries[index]),
+                          onTap: () => _openEntryDetail(entries[index]),
                         );
                       },
                     );
@@ -199,7 +202,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         borderRadius: BorderRadius.circular(28),
                       ),
                     ),
-                    onPressed: _showNewEntryPlaceholder,
+                    onPressed: _openNewEntry,
                     child: const Text(
                       'New Diary Entry',
                       style: TextStyle(
@@ -246,23 +249,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            'assets/images/diary.png',
-            height: 160,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'No diary entries yet',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+      child: Text(
+        'No diary entries yet',
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }
@@ -284,16 +276,34 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _showNewEntryPlaceholder() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('New entry page comes in Step 7')),
+  Future<void> _openNewEntry() async {
+    final bool? wasCreated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(builder: (_) => NewEntryPage(user: widget.user)),
     );
+
+    if (!mounted || wasCreated != true) {
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Diary entry saved.')));
   }
 
-  void _showEntryDetailPlaceholder(DiaryEntry entry) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Detail page for "${entry.title}" comes later')),
+  Future<void> _openEntryDetail(DiaryEntry entry) async {
+    final bool? wasDeleted = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(
+        builder: (_) => EntryDetailPage(entry: entry, user: widget.user),
+      ),
     );
+
+    if (!mounted || wasDeleted != true) {
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Diary entry deleted.')));
   }
 }
 
@@ -323,7 +333,7 @@ class _DiaryEntryListItem extends StatelessWidget {
               SizedBox(
                 width: 46,
                 child: Text(
-                  entry.icon,
+                  DiaryEmotion.emojiFor(entry.icon),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -373,7 +383,7 @@ class _EntryDate extends StatelessWidget {
           ),
         ),
         Text(
-          _monthName(date),
+          DiaryDateFormatter.month(date),
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
             color: Colors.white,
@@ -391,24 +401,5 @@ class _EntryDate extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _monthName(DateTime date) {
-    const List<String> months = <String>[
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-
-    return months[date.month - 1];
   }
 }
