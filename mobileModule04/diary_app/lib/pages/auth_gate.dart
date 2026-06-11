@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
-import 'diary_page.dart';
+import 'profile_page.dart';
 import 'welcome_page.dart';
 
 class AuthGate extends StatelessWidget {
@@ -28,7 +28,7 @@ class AuthGate extends StatelessWidget {
           return const WelcomePage();
         }
 
-        return DiaryPage(user: user);
+        return ProfilePage(user: user);
       },
     );
   }

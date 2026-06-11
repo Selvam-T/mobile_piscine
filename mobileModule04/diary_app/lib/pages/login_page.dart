@@ -11,8 +11,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  static const Color _pageBackground = Color(0xFFF2FAFE);
-  static const Color _diaryBlue = Color(0xFF079FE3);
+  static const Color _pageBackground = Color(0xFF292929);
+  static const Color _barBlue = Color(0xFF173865);
+  static const Color _diaryTeal = Color(0xFF79CBC8);
 
   final AuthService _authService = AuthService();
   String? _activeProvider;
@@ -101,7 +102,16 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _pageBackground,
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: _barBlue,
+        foregroundColor: Colors.white,
+        title: const Text('Login'),
+        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -112,16 +122,30 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Image.asset(
-                    'assets/images/diary.png',
-                    height: 352,
-                    fit: BoxFit.contain,
+                  Text(
+                    'Welcome.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      color: Colors.white,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 28),
+                  Text(
+                    'Choose a login method.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: _diaryTeal,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 56),
                   _AuthButton(
                     label: 'Login with Google',
                     iconAsset: 'assets/icons/google.png',
-                    color: _diaryBlue,
+                    color: _diaryTeal,
                     isLoading: _activeProvider == 'google',
                     isDisabled: _isLoading,
                     onPressed: _signInWithGoogle,
@@ -130,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                   _AuthButton(
                     label: 'Login with GitHub',
                     iconAsset: 'assets/icons/github.png',
-                    color: _diaryBlue,
+                    color: _diaryTeal,
                     isLoading: _activeProvider == 'github',
                     isDisabled: _isLoading,
                     onPressed: _signInWithGitHub,
@@ -140,9 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text(
                       _errorMessage!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                      style: const TextStyle(color: Color(0xFFFFB4AB)),
                     ),
                   ],
                 ],
@@ -181,8 +203,11 @@ class _AuthButton extends StatelessWidget {
         child: OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
             foregroundColor: color,
-            side: BorderSide(color: color),
-            backgroundColor: Colors.white,
+            side: BorderSide(color: color, width: 2),
+            backgroundColor: const Color(0xFF303030),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
           ),
           onPressed: isDisabled ? null : onPressed,
           icon: isLoading

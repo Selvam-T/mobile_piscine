@@ -5,8 +5,8 @@ import 'login_page.dart';
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
-  static const Color _pageBackground = Color(0xFFF2FAFE);
-  static const Color _diaryBlue = Color(0xFF079FE3);
+  static const Color _pageBackground = Color(0xFF292929);
+  static const Color _loginButtonGreen = Color.fromARGB(255, 65, 98, 48);
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +27,18 @@ class WelcomePage extends StatelessWidget {
                     height: 384,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 16),
                   Center(
                     child: SizedBox(
                       width: 220,
-                      height: 52,
+                      height: 56,
                       child: FilledButton(
                         style: FilledButton.styleFrom(
-                          backgroundColor: _diaryBlue,
+                          backgroundColor: _loginButtonGreen,
                           foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
@@ -46,7 +49,10 @@ class WelcomePage extends StatelessWidget {
                         },
                         child: const Text(
                           'Login',
-                          style: TextStyle(fontSize: 28),
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
                     ),

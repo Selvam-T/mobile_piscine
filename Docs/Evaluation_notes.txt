@@ -233,13 +233,13 @@ mobileModule04 - advanced_weather_app ❌
 ex00:
 - login button 
     - 1) redirects to an authentication page (not logged in) --> see Auth state management ✅
-    - 2) or directly to the diary page (logged in).--> see Auth state management ✅
+    - 2) or directly to the profile page (logged in).--> see Auth state management ✅
 - authentication system to store and manage users.
     - Firebase, AWS, etc. ✅
 - log in option  - Google or GitHub account ✅
 - Auth state management and conditional navigation
     - listen to auth state changes ✅
-    - after login change root page to DidaryPage ✅
+    - after login change root page to profile Page ✅
 - persistence check, sign out and sigin, Firebase should restore the signed-in user ✅
 
 
@@ -249,3 +249,21 @@ Test edge case:
     - block popups in browser, popup blocked message ❌
    
 ex01:
+prompt: Become familiar with  exercise 00 app shape. 
+When ready we implement exercise 01 step by by according to the infographic workflow.
+
+- Example Firestore cloud database.
+    - collection = notes
+    - document ID = auto generated (optional?)
+    - collect field - date, icon, text, title, usermail, uid(optional?)
+
+- profile page contains -
+    - title 
+    - sign out (useful but not mentioned)
+    - tabs with person icon and calendar icon
+    - tab view of person icon show entry list minimal
+    - tab view of person icon show 'new diary entry' button
+
+Test:
+    1) malformed documents - skips instead of crashing the whole tab?
+    2) notes that is missing a required field or has the wrong type, how ?

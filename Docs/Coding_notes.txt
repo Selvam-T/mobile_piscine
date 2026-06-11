@@ -172,10 +172,44 @@ ex00:
     - stores uid, email, displayName, photoURL, providerData
     - do not need to store pwd, tokens, provider secrets or OAuth credentials. (Firebase handles internally)
 
-- auth state decide which page appears- AuthGate or DiaryPage
+- AuthGate decides which page appears:
+    - signed out -> WelcomePage
+    - signed in -> ProfilePage
 
 - When you click Sign out, you clear the Firebase app session. 
     - But your browser may still be signed into Google or GitHub.
     - So when you log in again, browser active account is silently reused
 
 ex01: Profile Page
+
+
+- create Firestore database collection id, Add fields
+- add the cloud_firestore dependency and 
+- update its SDK cache
+
+- diary_entry.dart --> Data model
+    - defines the shape of one diary entry inside the app
+    - when the app reads a Firestore note, it will turn that document into a DiaryEntry. 
+    - When the app saves a new note, it will turn a DiaryEntry into a Firestore map.
+
+- diary_service.dart --> handle Firestore CRUD operations.
+    - will import diary_entry
+
+- Step 5 Profile Page UI:
+    - AppBar title: Your Diary Entries
+    - Sign out action remains in AppBar
+    - Bottom NavigationBar has Profile/person tab and Calendar tab
+    - Profile/person tab is the default selected tab
+    - Profile/person tab displays diary entries as minimal rows:
+        - date | icon | title
+    - New Diary Entry button is visible, currently placeholder SnackBar
+    - Calendar tab is placeholder for later calendar implementation
+
+- Later notes:
+    - Map icon text to display emoticons, for example happy -> smiley face
+    - New Diary Entry page should include dropdown/list of emoticons/icons:
+        - smiley-face -> happy
+        - sad-face -> sad
+    - Clicking New Diary Entry should navigate to the new entry page instead of SnackBar
+    - Clicking an entry should navigate to the detail page instead of SnackBar
+    - Detail page should include a button named "Delete this entry"
