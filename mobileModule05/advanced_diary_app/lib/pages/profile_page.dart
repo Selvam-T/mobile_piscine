@@ -76,32 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _pageBackground,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: _barBlue,
-        foregroundColor: Colors.white,
-        title: const Text('Your Diary Entries'),
-        titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0,
-        ),
-        actions: [
-          TextButton(
-            onPressed: _isSigningOut ? null : _signOut,
-            style: TextButton.styleFrom(foregroundColor: Colors.white),
-            child: _isSigningOut
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text('Sign out'),
-          ),
-        ],
-      ),
       body: SafeArea(child: _buildSelectedTab()),
       bottomNavigationBar: NavigationBar(
         backgroundColor: _barBlue,
@@ -141,76 +115,29 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildEntryListTab() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 22, 14, 28),
+    return SingleChildScrollView(
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 640),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildUserSummary(),
-              const SizedBox(height: 18),
-              if (_errorMessage != null) ...[
-                _buildErrorText(_errorMessage!),
-                const SizedBox(height: 12),
-              ],
-              Expanded(
-                child: StreamBuilder<List<DiaryEntry>>(
-                  stream: _diaryService.getEntries(widget.user.uid),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (snapshot.hasError) {
-                      return _buildErrorText(
-                        'Could not load diary entries. ${snapshot.error}',
-                      );
-                    }
-
-                    final List<DiaryEntry> entries =
-                        snapshot.data ?? <DiaryEntry>[];
-
-                    if (entries.isEmpty) {
-                      return _buildEmptyState();
-                    }
-
-                    return ListView.separated(
-                      itemCount: entries.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        return _DiaryEntryListItem(
-                          entry: entries[index],
-                          onTap: () => _openEntryDetail(entries[index]),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: SizedBox(
-                  width: 230,
-                  height: 58,
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: _diaryTeal,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                    ),
-                    onPressed: _openNewEntry,
-                    child: const Text(
-                      'New Diary Entry',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
+              _buildProfileHeader(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 20, 14, 28),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (_errorMessage != null) ...[
+                      _buildErrorText(_errorMessage!),
+                      const SizedBox(height: 14),
+                    ],
+                    _buildLastEntriesSection(),
+                    const SizedBox(height: 30),
+                    _buildFeelingsSection(),
+                    const SizedBox(height: 24),
+                    _buildNewEntryButton(),
+                  ],
                 ),
               ),
             ],
@@ -220,37 +147,265 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildUserSummary() {
+  Widget _buildProfileHeader() {
     final User user = widget.user;
-    final String userEmail = user.email ?? 'Signed-in user';
+    final String userLabel = _userDisplayLabel(user);
 
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 28,
-          backgroundColor: _diaryTeal,
-          backgroundImage: const AssetImage('assets/images/dog.jpg'),
-        ),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Text(
-            userEmail,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
+    return SizedBox(
+      height: 150,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset('assets/images/profile_bg.jpg', fit: BoxFit.cover),
+          Container(color: Colors.black.withValues(alpha: 0.48)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: CircleAvatar(
+                    radius: 38,
+                    backgroundColor: _diaryTeal,
+                    backgroundImage: AssetImage('assets/images/dog.jpg'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 92),
+                  child: Center(
+                    child: Text(
+                      userLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    onPressed: _isSigningOut ? null : _signOut,
+                    tooltip: 'Logout',
+                    color: Colors.white,
+                    icon: _isSigningOut
+                        ? const SizedBox.square(
+                            dimension: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.logout),
+                  ),
+                ),
+              ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  String _userDisplayLabel(User user) {
+    final String? displayName = user.displayName?.trim();
+    if (displayName != null && displayName.isNotEmpty) {
+      return displayName;
+    }
+
+    final String? email = user.email?.trim();
+    if (email != null && email.isNotEmpty) {
+      return email;
+    }
+
+    return 'Signed-in user';
+  }
+
+  Widget _buildLastEntriesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Last 2 Entries',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: 12),
+        StreamBuilder<List<DiaryEntry>>(
+          stream: _diaryService.getLastEntries(widget.user.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 150,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return _buildErrorText(
+                'Could not load diary entries. ${snapshot.error}',
+              );
+            }
+
+            final List<DiaryEntry> entries = snapshot.data ?? <DiaryEntry>[];
+
+            if (entries.isEmpty) {
+              return _buildEmptyState();
+            }
+
+            return Column(
+              children: [
+                for (int index = 0; index < entries.length; index++) ...[
+                  if (index > 0) const SizedBox(height: 12),
+                  _DiaryEntryListItem(
+                    entry: entries[index],
+                    onTap: () => _openEntryDetail(entries[index]),
+                  ),
+                ],
+              ],
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildFeelingsSection() {
+    return StreamBuilder<List<DiaryEntry>>(
+      stream: _diaryService.getEntries(widget.user.uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 120,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return _buildErrorText(
+            'Could not load feeling ratios. ${snapshot.error}',
+          );
+        }
+
+        final List<DiaryEntry> entries = snapshot.data ?? <DiaryEntry>[];
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Feeling ratio for ${entries.length} entries',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildFeelingRatios(entries),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFeelingRatios(List<DiaryEntry> entries) {
+    if (entries.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+        decoration: BoxDecoration(
+          color: const Color(0xFF303030),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: _cardBorder, width: 2),
+        ),
+        child: Text(
+          'No feelings yet',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      );
+    }
+
+    final Map<String, int> feelingCounts = <String, int>{};
+    for (final DiaryEntry entry in entries) {
+      final String feeling = entry.icon.trim().toLowerCase();
+      feelingCounts[feeling] = (feelingCounts[feeling] ?? 0) + 1;
+    }
+
+    final List<DiaryEmotion> usedFeelings = DiaryEmotion.options
+        .where(
+          (DiaryEmotion emotion) => feelingCounts.containsKey(emotion.value),
+        )
+        .toList();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF303030),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: _cardBorder, width: 2),
+      ),
+      child: Column(
+        children: [
+          for (int index = 0; index < usedFeelings.length; index++) ...[
+            if (index > 0) const SizedBox(height: 12),
+            _FeelingRatioChip(
+              emoji: usedFeelings[index].emoji,
+              percentage:
+                  ((feelingCounts[usedFeelings[index].value]! /
+                              entries.length) *
+                          100)
+                      .round(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNewEntryButton() {
     return Center(
+      child: SizedBox(
+        width: 230,
+        height: 58,
+        child: FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: _diaryTeal,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+          ),
+          onPressed: _openNewEntry,
+          child: const Text(
+            'New Diary Entry',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 28),
+      decoration: BoxDecoration(
+        color: const Color(0xFF303030),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: _cardBorder, width: 2),
+      ),
       child: Text(
         'No diary entries yet',
+        textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.w700,
@@ -360,6 +515,31 @@ class _DiaryEntryListItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FeelingRatioChip extends StatelessWidget {
+  const _FeelingRatioChip({required this.emoji, required this.percentage});
+
+  final String emoji;
+  final int percentage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(emoji, style: const TextStyle(fontSize: 28)),
+        const SizedBox(width: 8),
+        Text(
+          '$percentage%',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
     );
   }
 }

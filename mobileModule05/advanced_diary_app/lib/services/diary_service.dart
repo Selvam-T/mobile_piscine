@@ -39,6 +39,15 @@ class DiaryService {
     });
   }
 
+  Stream<List<DiaryEntry>> getLastEntries(String uid, {int limit = 2}) {
+    return _notes
+        .where('uid', isEqualTo: uid)
+        .orderBy('date', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map(_entriesFromSnapshot);
+  }
+
   Future<DiaryEntry?> getEntryById(String entryId) async {
     final DocumentSnapshot<Map<String, dynamic>> snapshot = await _notes
         .doc(entryId)
@@ -53,6 +62,12 @@ class DiaryService {
 
   Future<void> deleteEntry(String entryId) {
     return _notes.doc(entryId).delete();
+  }
+
+  List<DiaryEntry> _entriesFromSnapshot(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    return snapshot.docs.map(_entryFromDocument).nonNulls.toList();
   }
 
   DiaryEntry? _entryFromDocument(

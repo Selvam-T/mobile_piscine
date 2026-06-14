@@ -282,3 +282,15 @@ mobileModule05 - advanced_weather_app ❌
 
 - It does not say whether or not I can use the same 
     Firebase backend project ID - diary-app-20745.firebaseapp.com
+- The avatar, username, sign out was placed in appbar in previous module
+    - this is incorrect (so I placed it ass body header) ✅
+    - appbar is Standard top navigation: title, back button, actions, consistent toolbar height 
+
+- firestore query limits to 2 entries at query level ✅
+- Open entry detail page  ✅
+    - display Date, feeling, Title, Text
+    - Delete button
+- Delete button - delete entry from firestore.  ✅
+- The total number of entries. ✅
+- feelings/percentage of use across all entries. ✅
+- A button to add a new entry ✅

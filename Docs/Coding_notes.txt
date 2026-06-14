@@ -253,3 +253,29 @@ mobileModule05
 
 ex00 : profile page (continued from last)
 -----------------------------------------
+
+- signed-in route to ProfilePage already exists (from before)
+- refactor existing code to replace appbar with profileHeader to contain avatar, username, signout
+
+- logout functionality is in place (from before)
+
+- fetch and display entries - firestore query - limits to 2 at the query level.
+    - Firestore ask to create a composite index for uid + date desc the first time this query runs. 
+    - Firebase Console/ Database/ Index Tab / Manual - create index
+    - Add field uid Ascending, date Descending. Click create. Take too long to build.
+
+- Open entry detail page display -
+    - Date - DiaryDateFormatter.fullDate(...)
+    - feeling - DiaryEmotion.emojiFor(entry.icon)
+    - Title - entry.title 
+    - Text - entry.text
+    - Delete button
+        - calls DiaryService.deleteEntry(entryId)
+        - Service deletes from Firestore using: _notes.doc(entryId).delete()
+
+    - A button to add a new entry.
+        - calls _openNewEntry.
+
+    - The total number of entries 
+        - getEntries(widget.user.uid).
+    - feelings/percentage of use across all entries.
