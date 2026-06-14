@@ -227,8 +227,8 @@ ex04: Weekly Tab ✅
     - A chart with two curves: min and max temp
     - A list - day of week, min and max temp, weather icon (scrollable)
 
-mobileModule04 - advanced_weather_app ❌
--------------------------------------
+mobileModule04 - diary_app
+---------------------------
    
 ex00:
 - login button 
@@ -249,28 +249,36 @@ Test edge case:
     - block popups in browser, popup blocked message ❌
    
 ex01:
-prompt: Become familiar with  exercise 00 app shape. 
+prompt: 
+Become familiar with  exercise 00 app shape. 
 When ready we implement exercise 01 step by by according to the infographic workflow.
 
-- Example Firestore cloud database.
-    - collection = notes
-    - document ID = auto generated (optional?)
-    - collect field - date, icon, text, title, usermail, uid(optional?)
+- Create Firestore cloud database.
+    - collection = notes ✅
+    - document ID = auto generated (optional?)✅
+    - collect field - date, icon, text, title, usermail, uid(optional?) ✅
 
 - profile page contains -
-    - title 
+    - title ✅
     - sign out (useful but not mentioned)
-    - tabs with person icon and calendar icon
-    - tab view of person icon show entry list minimal
-    - tab view of person icon show 'new diary entry' button
+    - tabs with person icon and calendar icon ✅
+    - tab view of person icon show entry list minimal ✅
+    - tab view of person icon show 'new diary entry' button ✅
 
-- display detail list in new window, contain delete button
-- delete button delete diary entry
+- display detail list in new window, contain delete button ✅
+- delete button delete diary entry ✅
 
-- create new entry
+- create new entry ✅
 
-- I have additionally implemented some features like display user profile
+- I have additionally implemented some features like display user profile + sign out
+    - based on what I saw in the PDF sample profile page image.
 
 Test:
     1) malformed documents - skips instead of crashing the whole tab?
     2) notes that is missing a required field or has the wrong type, how ?
+
+mobileModule05 - advanced_weather_app ❌
+-------------------------------------
+
+- It does not say whether or not I can use the same 
+    Firebase backend project ID - diary-app-20745.firebaseapp.com

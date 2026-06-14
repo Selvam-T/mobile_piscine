@@ -127,7 +127,7 @@ Ex04:
 
 mobileModule04 
 --------------
--  diary_app
+- diary_app
 - create, read, and delete diary entries
 - authentication system
 - database
@@ -149,7 +149,7 @@ ex00:
     - install Firebase CLI 12.9.1 locally
     - flutter pub get
 
-- Firebase Auth is the auth system we’ll use. 
+- Firebase Auth is the "auth system" I’ll use. 
     - It will store/manage users, and 
     - later we’ll enable Google + GitHub providers in Firebase Console.
 - Firebase initialization:
@@ -239,3 +239,17 @@ ex01: Profile Page
     - Save calls DiaryService.createEntry()
     - On success, Navigator returns to Profile and Profile StreamBuilder refreshes the list
     - Save failures show an error message on NewEntryPage
+
+
+mobileModule05 
+--------------
+- advanced_diary_app
+
+- copied over lib, test, assets folder
+- merge pubspec.yaml (change name: advanced_diary_apps)
+    - copy asset declarations, needed dependencies, replace package imports
+    - flutter pub get , flutter test, flutter analyze, flutter run
+- ensure new pubspec.yaml include copied app dependencies/ assets
+
+ex00 : profile page (continued from last)
+-----------------------------------------
