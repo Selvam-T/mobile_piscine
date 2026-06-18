@@ -48,6 +48,22 @@ class DiaryService {
         .map(_entriesFromSnapshot);
   }
 
+  Stream<List<DiaryEntry>> getEntriesForDate(String uid, DateTime date) {
+    final DateTime startOfDay = DateTime(date.year, date.month, date.day);
+    final DateTime startOfNextDay = startOfDay.add(const Duration(days: 1));
+
+    return _notes
+        .where('uid', isEqualTo: uid)
+        .where(
+          'date',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+          isLessThan: Timestamp.fromDate(startOfNextDay),
+        )
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map(_entriesFromSnapshot);
+  }
+
   Future<DiaryEntry?> getEntryById(String entryId) async {
     final DocumentSnapshot<Map<String, dynamic>> snapshot = await _notes
         .doc(entryId)

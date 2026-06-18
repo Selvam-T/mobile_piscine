@@ -6,6 +6,7 @@ import '../models/diary_emotion.dart';
 import '../models/diary_entry.dart';
 import '../services/auth_service.dart';
 import '../services/diary_service.dart';
+import 'agenda_page.dart';
 import 'entry_detail_page.dart';
 import 'new_entry_page.dart';
 
@@ -108,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildSelectedTab() {
     if (_selectedTabIndex == 1) {
-      return _buildCalendarPlaceholder();
+      return AgendaPage(user: widget.user);
     }
 
     return _buildEntryListTab();
@@ -410,15 +411,6 @@ class _ProfilePageState extends State<ProfilePage> {
           color: Colors.white,
           fontWeight: FontWeight.w700,
         ),
-      ),
-    );
-  }
-
-  Widget _buildCalendarPlaceholder() {
-    return const Center(
-      child: Text(
-        'Calendar view coming later',
-        style: TextStyle(color: Colors.white),
       ),
     );
   }

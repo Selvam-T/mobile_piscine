@@ -279,3 +279,21 @@ ex00 : profile page (continued from last)
     - The total number of entries 
         - getEntries(widget.user.uid).
     - feelings/percentage of use across all entries.
+
+ex01 : Agenda page
+------------------
+
+- AgendaPage extends StatefulWidget
+    - _buildMonthNavigator()
+    - _buildCalendarSection()
+    - _buildSelectedDateEntriesSection()
+
+- add calendar dependency to pubspec.yaml
+
+- import 'package:table_calendar/table_calendar.dart'
+    - Package handles month layout, swipes, date logic, selected/today states.
+- tapping date updates _selectedDate and _focusedDay
+- Firestore query filter by uid, selected date, order by date desc
+- getEntriesForDate()
+- EntryDetailPage(entry: entry, user: widget.user) is same for profilepage and AgendaPage
+- DiaryService.deleteEntry(entryId) is same for profilepage and agendapage

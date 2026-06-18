@@ -279,7 +279,7 @@ Test:
 
 mobileModule05 - advanced_weather_app ❌
 -------------------------------------
-
+ex00:
 - It does not say whether or not I can use the same 
     Firebase backend project ID - diary-app-20745.firebaseapp.com
 - The avatar, username, sign out was placed in appbar in previous module
@@ -294,3 +294,14 @@ mobileModule05 - advanced_weather_app ❌
 - The total number of entries. ✅
 - feelings/percentage of use across all entries. ✅
 - A button to add a new entry ✅
+
+ex01:
+- Agenda page exists, wired to calendar in bottom navigation bar ✅
+- add TableCalendar to display calendar grid ✅
+- tapping a date, shows entries from date ✅
+- a scrollable list of entries ✅
+- what is the difference between list of entries section in profilepage vs agenda page? ✅
+    - profile page shows latest 2 entries
+    - Agenda shows all entries for date picked
+- able to select an entry to view its details ✅
+- delete an entry, the list must be updated accordingly ✅
