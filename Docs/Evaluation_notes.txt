@@ -111,7 +111,8 @@ ex01: TopBar
 
 mobileModule02 - medium_weather_app
 -----------------------------------
-    
+Ignore Warning during build this applies to the Kotlin Gradle Plugin, not an issue with code.
+
 ex00:
     Prepare:
     - A Geocoding API converts between place names and coordinates (Open-Meteo Geocoding API)
@@ -189,6 +190,7 @@ Complete Test
     - Turn off wifi or data
 3. GPS permission denied
     - Revoke location permission in Android settings
+    - settings/ location/ select app - don't allow
 4. GPS permission granted
 5. Search while on each tab
 6. Switch tabs after search
@@ -196,11 +198,16 @@ Complete Test
 8. Search without selecting suggestion
     - Type Singapore, Press Keyboard search
 9. App launch tab
+10. Empty search
+    - do not clear the last loaded weather data
+    - do not show an Error
+    - do nothing, show what is already displaying
 
 
 mobileModule03 - advanced_weather_app 
 -------------------------------------
-   
+Ignore Warning during build this applies to the Kotlin Gradle Plugin, not an issue with code.
+
 ex00: Search Bar ✅
     - Debug Ribbon still appears, the Geolocation icon is moved inwards
     - display suggestions <= 5

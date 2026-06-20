@@ -115,6 +115,7 @@ class _BottomBarState extends State<BottomBar>
   double? lastLongitude;
   String errorMessage = '';
   String selectedLocationText = '';
+  bool isLoadingWeather = false;
   bool isSearchingCities = false;
   int searchRequestId = 0;
   int weatherRequestId = 0;
@@ -256,6 +257,7 @@ class _BottomBarState extends State<BottomBar>
 
     setState(() {
       errorMessage = message;
+      isLoadingWeather = false;
     });
   }
 
@@ -290,6 +292,8 @@ class _BottomBarState extends State<BottomBar>
       currentForecast = null;
       todayForecast = const [];
       weeklyForecast = const [];
+      errorMessage = '';
+      isLoadingWeather = true;
     });
   }
 
@@ -678,6 +682,7 @@ class _BottomBarState extends State<BottomBar>
         todayForecast = today;
         weeklyForecast = weekly;
         errorMessage = '';
+        isLoadingWeather = false;
       });
     } on Exception {
       if (isCurrentWeatherRequest(requestId)) {
@@ -917,6 +922,10 @@ class _BottomBarState extends State<BottomBar>
       return Center(child: Text(errorMessage, textAlign: TextAlign.center));
     }
 
+    if (isLoadingWeather) {
+      return const Center(child: Text('Loading...'));
+    }
+
     if (selectedLocationText.isEmpty || currentForecast == null) {
       return Center(child: Text(tabName, textAlign: TextAlign.center));
     }
@@ -934,6 +943,10 @@ class _BottomBarState extends State<BottomBar>
   Widget buildTodayContent() {
     if (errorMessage.isNotEmpty) {
       return Center(child: Text(errorMessage, textAlign: TextAlign.center));
+    }
+
+    if (isLoadingWeather) {
+      return const Center(child: Text('Loading...'));
     }
 
     if (selectedLocationText.isEmpty) {
@@ -1005,6 +1018,10 @@ class _BottomBarState extends State<BottomBar>
   Widget buildWeeklyContent() {
     if (errorMessage.isNotEmpty) {
       return Center(child: Text(errorMessage, textAlign: TextAlign.center));
+    }
+
+    if (isLoadingWeather) {
+      return const Center(child: Text('Loading...'));
     }
 
     if (selectedLocationText.isEmpty) {

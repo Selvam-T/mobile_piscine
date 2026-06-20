@@ -435,6 +435,7 @@ class WeeklyTemperatureChartPainter extends CustomPainter {
 
 class _BottomBarState extends State<BottomBar>
     with SingleTickerProviderStateMixin {
+  static final Color skyChromeColor = Colors.lightBlue.shade200;
   static const String geolocationUnavailableMessage =
       'Geolocation is not available. Please enable that in your App settings.';
   static const String invalidCityMessage =
@@ -455,24 +456,27 @@ class _BottomBarState extends State<BottomBar>
   double? lastLongitude;
   String errorMessage = '';
   String selectedLocationText = '';
+  bool isLoadingWeather = false;
   bool isSearchingCities = false;
   int searchRequestId = 0;
   int weatherRequestId = 0;
 
   String cityLabel(CitySuggestion suggestion) {
-    final String region = suggestion.region.isEmpty ? '-' : suggestion.region;
-    final String country = suggestion.country.isEmpty
-        ? '-'
-        : suggestion.country;
+    final List<String> labelLines = [
+      suggestion.name,
+      if (suggestion.region.isNotEmpty) suggestion.region,
+      if (suggestion.country.isNotEmpty) suggestion.country,
+    ];
 
-    return '${suggestion.name}\n$region\n$country';
+    return labelLines.join('\n');
   }
 
   TextSpan highlightedMatchSpan(String text, String searchText) {
     final String trimmedSearchText = searchText.trim();
+    const TextStyle normalStyle = TextStyle(color: Colors.black, fontSize: 18);
 
     if (trimmedSearchText.isEmpty) {
-      return TextSpan(text: text);
+      return TextSpan(text: text, style: normalStyle);
     }
 
     final String lowerText = text.toLowerCase();
@@ -496,13 +500,17 @@ class _BottomBarState extends State<BottomBar>
       spans.add(
         TextSpan(
           text: text.substring(matchIndex, matchEnd),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       );
       searchStart = matchEnd;
     }
 
-    return TextSpan(children: spans);
+    return TextSpan(style: normalStyle, children: spans);
   }
 
   Widget suggestionTextRow({
@@ -528,14 +536,15 @@ class _BottomBarState extends State<BottomBar>
     final String city = placemark.locality?.isNotEmpty == true
         ? placemark.locality!
         : placemark.subAdministrativeArea ?? '-';
-    final String region = placemark.administrativeArea?.isNotEmpty == true
-        ? placemark.administrativeArea!
-        : '-';
-    final String country = placemark.country?.isNotEmpty == true
-        ? placemark.country!
-        : '-';
+    final String region = placemark.administrativeArea ?? '';
+    final String country = placemark.country ?? '';
+    final List<String> labelLines = [
+      city,
+      if (region.isNotEmpty) region,
+      if (country.isNotEmpty) country,
+    ];
 
-    return '$city\n$region\n$country';
+    return labelLines.join('\n');
   }
 
   String weatherDescription(num weatherCode) {
@@ -646,19 +655,21 @@ class _BottomBarState extends State<BottomBar>
   Widget styledLocationText(String locationText) {
     final List<String> lines = locationText.split('\n');
     final String city = lines.isEmpty ? locationText : lines.first;
-    final String rest = lines.length > 1 ? lines.skip(1).join(', ') : '';
+    final String rest = lines.length > 1
+        ? lines.skip(1).where((String line) => line != '-').join(', ')
+        : '';
 
     return Text.rich(
       TextSpan(
         children: [
           TextSpan(
             text: city,
-            style: const TextStyle(color: Colors.red),
+            style: const TextStyle(color: Colors.red, fontSize: 16),
           ),
           if (rest.isNotEmpty)
             TextSpan(
               text: '\n$rest',
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black, fontSize: 16),
             ),
         ],
       ),
@@ -668,30 +679,33 @@ class _BottomBarState extends State<BottomBar>
 
   Widget hourlyForecastColumn(HourlyForecast forecast) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       child: SizedBox(
         width: 104,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(forecast.hour, style: const TextStyle(color: Colors.black)),
-            const SizedBox(height: 8),
+            Text(
+              forecast.hour,
+              style: const TextStyle(color: Colors.black, fontSize: 16),
+            ),
+            const SizedBox(height: 10),
             Icon(
               weatherIcon(forecast.description),
               color: weatherIconColor(forecast.description),
               size: 30,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               '${forecast.temperature.toStringAsFixed(1)} C',
               style: const TextStyle(
                 color: Colors.blue,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             FittedBox(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -700,7 +714,7 @@ class _BottomBarState extends State<BottomBar>
                   const SizedBox(width: 4),
                   Text(
                     '${forecast.windSpeed.toStringAsFixed(1)} km/h',
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -758,7 +772,7 @@ class _BottomBarState extends State<BottomBar>
 
   Widget dailyForecastColumn(DailyForecast forecast) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       child: SizedBox(
         width: 92,
         child: Column(
@@ -766,30 +780,30 @@ class _BottomBarState extends State<BottomBar>
           children: [
             Text(
               shortDateLabel(forecast.date),
-              style: const TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black, fontSize: 16),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Icon(
               weatherIcon(forecast.description),
               color: weatherIconColor(forecast.description),
               size: 30,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               '${forecast.maxTemperature.toStringAsFixed(1)} C',
               style: const TextStyle(
                 color: Colors.green,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Text(
               '${forecast.minTemperature.toStringAsFixed(1)} C',
               style: const TextStyle(
                 color: Colors.red,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -897,6 +911,7 @@ class _BottomBarState extends State<BottomBar>
 
     setState(() {
       errorMessage = message;
+      isLoadingWeather = false;
     });
   }
 
@@ -931,6 +946,8 @@ class _BottomBarState extends State<BottomBar>
       currentForecast = null;
       todayForecast = const [];
       weeklyForecast = const [];
+      errorMessage = '';
+      isLoadingWeather = true;
     });
   }
 
@@ -1319,6 +1336,7 @@ class _BottomBarState extends State<BottomBar>
         todayForecast = today;
         weeklyForecast = weekly;
         errorMessage = '';
+        isLoadingWeather = false;
       });
     } on Exception {
       if (isCurrentWeatherRequest(requestId)) {
@@ -1563,6 +1581,10 @@ class _BottomBarState extends State<BottomBar>
       return Center(child: Text(errorMessage, textAlign: TextAlign.center));
     }
 
+    if (isLoadingWeather) {
+      return const Center(child: Text('Loading...'));
+    }
+
     if (selectedLocationText.isEmpty || currentForecast == null) {
       return Center(child: Text(tabName, textAlign: TextAlign.center));
     }
@@ -1574,28 +1596,28 @@ class _BottomBarState extends State<BottomBar>
         mainAxisSize: MainAxisSize.min,
         children: [
           styledLocationText(selectedLocationText),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           Text(
             '${forecast.temperature.toStringAsFixed(1)} C',
             style: const TextStyle(
               color: Colors.blue,
-              fontSize: 40,
+              fontSize: 42,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Text(
             forecast.description,
-            style: const TextStyle(color: Colors.black, fontSize: 18),
+            style: const TextStyle(color: Colors.black, fontSize: 20),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           Icon(
             weatherIcon(forecast.description),
             color: weatherIconColor(forecast.description),
             size: 32,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 18),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1603,7 +1625,7 @@ class _BottomBarState extends State<BottomBar>
               const SizedBox(width: 8),
               Text(
                 '${forecast.windSpeed.toStringAsFixed(1)} km/h',
-                style: const TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black, fontSize: 16),
               ),
             ],
           ),
@@ -1615,6 +1637,10 @@ class _BottomBarState extends State<BottomBar>
   Widget buildTodayContent() {
     if (errorMessage.isNotEmpty) {
       return Center(child: Text(errorMessage, textAlign: TextAlign.center));
+    }
+
+    if (isLoadingWeather) {
+      return const Center(child: Text('Loading...'));
     }
 
     if (selectedLocationText.isEmpty) {
@@ -1635,7 +1661,7 @@ class _BottomBarState extends State<BottomBar>
       child: Column(
         children: [
           styledLocationText(selectedLocationText),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Container(
             height: 220,
             padding: const EdgeInsets.all(12),
@@ -1643,20 +1669,21 @@ class _BottomBarState extends State<BottomBar>
             child: Column(
               children: [
                 const Text(
-                  'Today Temperatures',
+                  'Today Temperature',
                   style: TextStyle(
                     color: Colors.black,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Expanded(
                   child: HourlyTemperatureChart(forecast: todayForecast),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Expanded(child: hourlyForecastBlock()),
         ],
       ),
@@ -1666,6 +1693,10 @@ class _BottomBarState extends State<BottomBar>
   Widget buildWeeklyContent() {
     if (errorMessage.isNotEmpty) {
       return Center(child: Text(errorMessage, textAlign: TextAlign.center));
+    }
+
+    if (isLoadingWeather) {
+      return const Center(child: Text('Loading...'));
     }
 
     if (selectedLocationText.isEmpty) {
@@ -1686,7 +1717,7 @@ class _BottomBarState extends State<BottomBar>
       child: Column(
         children: [
           styledLocationText(selectedLocationText),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Container(
             height: 220,
             padding: const EdgeInsets.all(12),
@@ -1697,17 +1728,18 @@ class _BottomBarState extends State<BottomBar>
                   'Weekly Temperatures',
                   style: TextStyle(
                     color: Colors.black,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Expanded(
                   child: WeeklyTemperatureChart(forecast: weeklyForecast),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Expanded(child: weeklyForecastBlock()),
         ],
       ),
@@ -1773,6 +1805,8 @@ class _BottomBarState extends State<BottomBar>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: skyChromeColor,
+        foregroundColor: Colors.black,
         toolbarHeight: 76,
         titleSpacing: 8,
         title: Row(
@@ -1847,8 +1881,12 @@ class _BottomBarState extends State<BottomBar>
       ),
 
       bottomNavigationBar: BottomAppBar(
+        color: skyChromeColor,
         child: TabBar(
           controller: tabController,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.black87,
+          indicatorColor: Colors.blue.shade900,
           tabs: [
             Tab(icon: Icon(Icons.settings), text: 'Currently'),
             Tab(icon: Icon(Icons.today), text: 'Today'),
