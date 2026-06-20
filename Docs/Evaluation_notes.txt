@@ -79,6 +79,8 @@ ex03:
 
         static const double _maxResultMagnitude = 1000000000000;
 
+    - Avoid the last row in the grid partially being covered by navbar of Android system UI?
+        - did you implement safeArea() around the calculator body?
 
 mobileModule01 - weather_app
 ----------------------------
@@ -229,8 +231,11 @@ ex04: Weekly Tab ✅
 
 mobileModule04 - diary_app
 ---------------------------
-   
+Login with Github is less smooth, it opens browser for github autorization.
+    - normal behavior, not app fault
+
 ex00:
+-----
 - login button 
     - 1) redirects to an authentication page (not logged in) --> see Auth state management ✅
     - 2) or directly to the profile page (logged in).--> see Auth state management ✅
@@ -249,6 +254,7 @@ Test edge case:
     - block popups in browser, popup blocked message ❌
    
 ex01:
+-----
 prompt: 
 Become familiar with  exercise 00 app shape. 
 When ready we implement exercise 01 step by by according to the infographic workflow.
@@ -277,9 +283,13 @@ Test:
     1) malformed documents - skips instead of crashing the whole tab?
     2) notes that is missing a required field or has the wrong type, how ?
 
-mobileModule05 - advanced_weather_app ❌
+mobileModule05 - advanced_weather_app 
 -------------------------------------
+Login with Github is less smooth, it opens browser for github autorization.
+    - normal behavior, not app fault
+    
 ex00:
+-----
 - It does not say whether or not I can use the same 
     Firebase backend project ID - diary-app-20745.firebaseapp.com
 - The avatar, username, sign out was placed in appbar in previous module
@@ -296,6 +306,7 @@ ex00:
 - A button to add a new entry ✅
 
 ex01:
+----
 - Agenda page exists, wired to calendar in bottom navigation bar ✅
 - add TableCalendar to display calendar grid ✅
 - tapping a date, shows entries from date ✅

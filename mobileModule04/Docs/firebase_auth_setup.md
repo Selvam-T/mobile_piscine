@@ -365,7 +365,199 @@ Skipped intentionally:
 
 - iOS config.
 
-## 12. Next Phase
+## 12. Android Setup for Continuation Apps
+
+When a new Flutter project continues the same diary app, for example:
+
+```text
+mobileModule04/diary_app
+mobileModule05/advanced_diary_app
+```
+
+the projects can share the same Firebase project and Firestore database, but each Android app package must still be registered separately in Firebase.
+
+Module 04 uses:
+
+```text
+com.example.diary_app
+```
+
+Module 05 uses:
+
+```text
+com.example.advanced_diary_app
+```
+
+Even though both apps use the same Firebase project:
+
+```text
+diary-app-20745
+```
+
+Firebase Authentication treats each Android package as a separate Android client. Google sign-in on Android checks the package name and signing certificate fingerprints before allowing authentication. Therefore each package needs its own Firebase Android app registration and its own `google-services.json`.
+
+The Firestore documents can still be shared because both apps point to the same Firebase project id and use the same Firestore collections, such as:
+
+```text
+notes
+```
+
+So:
+
+- Firestore data sharing is controlled by the Firebase project and database.
+- Android sign-in trust is controlled by the Android package name plus SHA fingerprints.
+
+### Required Steps for Each Android App
+
+For each Flutter Android app, do the following.
+
+1. Register the Android app in Firebase Console.
+
+For Module 04:
+
+```text
+Package name: com.example.diary_app
+```
+
+For Module 05:
+
+```text
+Package name: com.example.advanced_diary_app
+```
+
+2. Generate the debug SHA fingerprints.
+
+Run this from the target app's Android folder:
+
+```bash
+cd /home/sthiagar/Desktop/mobile_piscine/mobileModule05/advanced_diary_app/android
+./gradlew signingReport
+```
+
+Use the `Variant: debug` values:
+
+```text
+SHA1
+SHA-256
+```
+
+For the current development machine, Module 05 used:
+
+```text
+SHA1: FB:1F:D6:85:0F:AF:92:89:A5:50:C3:1E:9F:40:5B:F5:3D:77:1F:1B
+SHA-256: 9B:2F:C2:4F:99:8D:98:A7:49:DF:A1:3B:11:D8:AE:18:B4:A7:42:E8:F4:F8:3F:3E:00:3A:5F:14:F3:3C:0B:2F
+```
+
+3. Add both SHA values in Firebase Console.
+
+Open:
+
+```text
+Firebase Console > Project settings > Your apps > Android app
+```
+
+Select the matching Android package and add:
+
+```text
+SHA-1
+SHA-256
+```
+
+Then save.
+
+4. Download a fresh `google-services.json`.
+
+After adding SHA values, download the updated file and place it in the target app:
+
+```bash
+cp ~/Downloads/google-services.json \
+  /home/sthiagar/Desktop/mobile_piscine/mobileModule05/advanced_diary_app/android/app/google-services.json
+```
+
+The file must match the app package. For Module 05, it should contain:
+
+```text
+package_name: com.example.advanced_diary_app
+```
+
+After SHA setup, it should also include an Android OAuth client for the same package:
+
+```text
+client_type: 1
+certificate_hash: fb1fd6850faf9289a550c31e9f405bf53d771f1b
+```
+
+5. Update Gradle configuration.
+
+In `android/settings.gradle.kts`, include the Google Services plugin:
+
+```kotlin
+plugins {
+    id("dev.flutter.flutter-plugin-loader") version "1.0.0"
+    id("com.android.application") version "9.0.1" apply false
+    id("org.jetbrains.kotlin.android") version "2.3.20" apply false
+    id("com.google.gms.google-services") version "4.4.4" apply false
+}
+```
+
+In `android/app/build.gradle.kts`, apply the plugin in the app module:
+
+```kotlin
+plugins {
+    id("com.android.application")
+    id("com.google.gms.google-services")
+    id("dev.flutter.flutter-gradle-plugin")
+}
+```
+
+Do not apply `com.android.application`, `kotlin-android`, or `com.google.gms.google-services` in the root `android/build.gradle.kts`. The root file should keep the normal Flutter project-level configuration. Applying app plugins in the root file can cause errors such as:
+
+```text
+Cannot add task 'clean' as a task with that name already exists
+```
+
+6. Rebuild the project.
+
+From the Flutter project folder:
+
+```bash
+flutter clean
+flutter pub get
+flutter run
+```
+
+If testing on a physical Android phone, uninstall the old app from the phone before reinstalling if sign-in still behaves oddly.
+
+### Troubleshooting Notes
+
+If Google login fails with:
+
+```text
+GoogleSigninException(... clientId must be provided on Android ...)
+```
+
+then Android cannot find the generated Google client id. Check:
+
+- `android/app/google-services.json` exists.
+- `android/settings.gradle.kts` declares `com.google.gms.google-services`.
+- `android/app/build.gradle.kts` applies `com.google.gms.google-services`.
+- The JSON package name matches the app's `applicationId`.
+
+If Google login fails with:
+
+```text
+GoogleSigninExceptionCode canceled, [16] Account reauth failed
+```
+
+then the Android OAuth client is usually missing or mismatched. Check:
+
+- SHA-1 and SHA-256 were added to the correct Firebase Android app.
+- A fresh `google-services.json` was downloaded after saving SHA values.
+- The JSON includes `client_type: 1` and a `certificate_hash` for the app package.
+
+GitHub sign-in on Android may open a browser or custom tab. That is normal OAuth behavior. After GitHub/Firebase completes authentication, returning to the app should show the user as signed in.
+
+## 13. Next Phase
 
 Phase 2 will add the service layer:
 

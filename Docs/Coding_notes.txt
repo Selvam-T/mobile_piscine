@@ -182,7 +182,6 @@ ex00:
 
 ex01: Profile Page
 
-
 - create Firestore database collection id, Add fields
 - add the cloud_firestore dependency and 
 - update its SDK cache
@@ -243,6 +242,13 @@ ex01: Profile Page
 
 mobileModule05 
 --------------
+GitHub login is configured at the Firebase project Auth provider level, not per Android package.
+    - Both apps use the same Firebase project: diary-app-20745
+
+Google is different on Android because Google sign-in checks the Android app package and SHA certificate. 
+    - That is why Module 05 needed its own Android registration and SHA setup.
+    - refer to mobileModule04/Docs/firebase_auth_setup.md
+
 - advanced_diary_app
 
 - copied over lib, test, assets folder

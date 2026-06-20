@@ -13,9 +13,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Calculator',
       theme: ThemeData(
-        // Matching the warm, earthy aesthetic from your mockup image
         primarySwatch: Colors.brown,
-        scaffoldBackgroundColor: const Color(0xFFD2C4BE),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 138, 102, 87),
       ),
       home: const CalculatorPage(),
     );
@@ -401,110 +400,127 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calculator'),
-        backgroundColor: const Color(0xFF9E847A),
+        backgroundColor: const Color.fromARGB(255, 138, 102, 87),
         centerTitle: true,
         elevation: 0,
       ),
-      body: Container(
-        width: double.infinity,
-        color: const Color(0xFFD2C4BE),
-        child: Column(
-          children: [
-            // Child 1: Container holding the vertically aligned display text fields
-            Expanded(
-              flex: 4, // Allocation of screen space for the display area
-              child: Container(
-                padding: const EdgeInsets.all(24.0),
-                alignment: Alignment.bottomRight,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      expression,
-                      key: const Key('expression-display'),
-                      style: displayTextStyle,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      result,
-                      key: const Key('result-display'),
-                      style: displayTextStyle,
-                    ),
-                  ],
+      body: SafeArea(
+        bottom: true,
+        child: Container(
+          width: double.infinity,
+          color: const Color(0xFFD2C4BE),
+          child: Column(
+            children: [
+              // Child 1: Container holding the vertically aligned display text fields
+              Expanded(
+                flex: 4, // Allocation of screen space for the display area
+                child: Container(
+                  padding: const EdgeInsets.all(24.0),
+                  alignment: Alignment.bottomRight,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        expression,
+                        key: const Key('expression-display'),
+                        style: displayTextStyle,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        result,
+                        key: const Key('result-display'),
+                        style: displayTextStyle,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Child 2: The Grid container containing 5 columns and 4 rows
-            Expanded(
-              flex: 5, // Allocation of screen space for the keyboard
-              child: Container(
-                padding: const EdgeInsets.all(buttonSpacing),
-                color: const Color(0xFFAB958C),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final int buttonRowCount =
-                        (buttons.length / buttonColumnCount).ceil();
-                    final double buttonWidth =
-                        (constraints.maxWidth -
-                            (buttonColumnCount - 1) * buttonSpacing) /
-                        buttonColumnCount;
-                    final double buttonHeight =
-                        (constraints.maxHeight -
-                            (buttonRowCount - 1) * buttonSpacing) /
-                        buttonRowCount;
+              // Child 2: The Grid container containing 5 columns and 4 rows
+              Expanded(
+                flex: 5, // Allocation of screen space for the keyboard
+                child: Container(
+                  padding: const EdgeInsets.all(buttonSpacing),
+                  color: const Color.fromARGB(255, 138, 102, 87),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final int buttonRowCount =
+                          (buttons.length / buttonColumnCount).ceil();
+                      final double buttonWidth =
+                          (constraints.maxWidth -
+                              (buttonColumnCount - 1) * buttonSpacing) /
+                          buttonColumnCount;
+                      final double buttonHeight =
+                          (constraints.maxHeight -
+                              (buttonRowCount - 1) * buttonSpacing) /
+                          buttonRowCount;
 
-                    return GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: buttonColumnCount,
-                        crossAxisSpacing: buttonSpacing,
-                        mainAxisSpacing: buttonSpacing,
-                        childAspectRatio: buttonWidth / buttonHeight,
-                      ),
-                      itemCount: buttons.length,
-                      itemBuilder: (context, index) {
-                        final String buttonText = buttons[index];
+                      return GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: buttonColumnCount,
+                          crossAxisSpacing: buttonSpacing,
+                          mainAxisSpacing: buttonSpacing,
+                          childAspectRatio: buttonWidth / buttonHeight,
+                        ),
+                        itemCount: buttons.length,
+                        itemBuilder: (context, index) {
+                          final String buttonText = buttons[index];
 
-                        // Handle empty spacing element at the bottom right corner
-                        if (buttonText.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
+                          // Handle empty spacing element at the bottom right corner
+                          if (buttonText.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
 
-                        return InkWell(
-                          onTap: () => _onButtonPressed(buttonText),
-                          borderRadius: BorderRadius.circular(4),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFAB958C),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Center(
-                              child: Text(
-                                buttonText,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                  // Color logic matching your mockup text elements
-                                  color:
-                                      (buttonText == 'C' || buttonText == 'AC')
-                                      ? Colors.tealAccent[400]
-                                      : const Color(0xFFEFE6E2),
+                          return InkWell(
+                            onTap: () => _onButtonPressed(buttonText),
+                            borderRadius: BorderRadius.circular(4),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 138, 102, 87),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  buttonText,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                    // Color logic matching your mockup text elements
+                                    color:
+                                        (_isOperator(buttonText) ||
+                                            buttonText == '=')
+                                        ? Colors.black
+                                        : (buttonText == 'C' ||
+                                              buttonText == 'AC')
+                                        ? const Color.fromARGB(
+                                            255,
+                                            17,
+                                            217,
+                                            167,
+                                          )
+                                        : const Color.fromARGB(
+                                            255,
+                                            231,
+                                            216,
+                                            211,
+                                          ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

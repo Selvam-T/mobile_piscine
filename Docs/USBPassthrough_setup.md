@@ -77,6 +77,9 @@ If the phone does not appear in `lsusb`, check:
 
 Linux host operating systems automatically mount smartphones as media devices (via MTP/Gvfs) or hook them up to a host-side ADB daemon. Because a USB device can generally only be controlled by one system process at a time, you must kill these host-level processes to "release" the phone's lock.  
 
+**GVfs (GNOME Virtual File System)** 
+        - detect when you plug in a device that uses MTP (Media Transfer Protocol) or PTP (Picture Transfer Protocol).
+
 On the **host machine**, run:
 
 ```bash
