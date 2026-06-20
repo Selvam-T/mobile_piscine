@@ -203,7 +203,9 @@ class _AuthButton extends StatelessWidget {
         child: OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
             foregroundColor: color,
+            disabledForegroundColor: color,
             side: BorderSide(color: color, width: 2),
+            disabledBackgroundColor: const Color(0xFF303030),
             backgroundColor: const Color(0xFF303030),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(28),
