@@ -244,8 +244,8 @@ Login with Github is less smooth, it opens browser for github autorization.
 ex00:
 -----
 - login button 
-    - 1) redirects to an authentication page (not logged in) --> see Auth state management ✅
-    - 2) or directly to the profile page (logged in).--> see Auth state management ✅
+    - 1) redirects to an authentication page (when not logged in) --> see Auth state management ✅
+    - 2) or directly to the profile page (when gged in).--> see Auth state management ✅
 - authentication system to store and manage users.
     - Firebase, AWS, etc. ✅
 - log in option  - Google or GitHub account ✅
@@ -259,6 +259,9 @@ Test edge case:
     - When google sign in, close popup window, error message should be displayed ✅
     - disable internet then try login, error message ❌
     - block popups in browser, popup blocked message ❌
+
+Question: 
+1) Does the app communicate with google or github directly?
    
 ex01:
 -----
@@ -294,7 +297,49 @@ mobileModule05 - advanced_weather_app
 -------------------------------------
 Login with Github is less smooth, it opens browser for github autorization.
     - normal behavior, not app fault
-    
+
+a) Firebase Auth: used for Google and GitHub sign-in.
+b) Firebase Firestore: used for storing diary entries. 
+    - users can only access notes matching their authenticated uid.
+c) Firebase Storage: not used in the current diary app implementation.
+
+Firebase Auth explained:
+    - The GitHub OAuth application used to configure the GitHub authentication provider 
+      in Firebase is owned and managed by the Selvam-AI GitHub account. 
+      However, this does not restrict your app's end-users to this specific account; any user with a valid GitHub account will be able to sign in to the application."
+    - Google Sign-In configuration is not tied to a personal Google account.
+      Unlike GitHub.
+
+Firestore explained: 
+a) Collection - means Table, I named it 'notes'
+b) Document - one single record, one diary entry
+c) Field = one column
+
+Multi-App Data Sharing: 
+    - I have registerd the apps - diary_app and advanced_diary_app to
+    the same Firestore project called Diary App.
+    - When registered under same project they share 
+    the same Firestore database instance by default. 
+
+Sign in error:
+a) account-exists-with-different-credential:
+    - probably I have a google login user using same email in Firebase Authentication users
+    - or, I have an active github signin in chrome.
+
+b) Sign out / then Sign in auto logs in why ?
+    - App’s sign-out only clears the Firebase-side session, 
+      but the GitHub provider session can still be remembered by the browser. 
+    - GitHub does not always show a clean account picker like Google. 
+      It often reuses the active browser session.
+    - Chrome settings → Site settings → All sites.
+        - Clear data for github.com
+        - clear data for diary-app-20745
+    - Open again in new incognito.
+c) On mobile phone: 
+    - For GitHub, Firebase uses OAuth. On Android, 
+      this opens a browser-like system flow.
+    - So GitHub login depends on browser/custom-tab cookies/session on the phone.
+      That is why clearing Chrome/GitHub data can matter even though the app is installed.
 ex00:
 -----
 - It does not say whether or not I can use the same 

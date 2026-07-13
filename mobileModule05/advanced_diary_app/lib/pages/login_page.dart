@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +41,9 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final UserCredential credential = await signIn();
+      final UserCredential credential = await signIn().timeout(
+        const Duration(minutes: 2),
+      );
       final String label =
           credential.user?.displayName ??
           credential.user?.email ??
@@ -53,9 +57,19 @@ class _LoginPageState extends State<LoginPage> {
         context,
       ).showSnackBar(SnackBar(content: Text(label)));
       Navigator.of(context).popUntil((route) => route.isFirst);
+    } on TimeoutException {
+      _showError(
+        'Login timed out. Please try again and complete the sign-in window.',
+      );
     } on FirebaseAuthException catch (error) {
+      debugPrint('Auth error provider: $provider');
+      debugPrint('Auth error code: ${error.code}');
+      debugPrint('Auth error email: ${error.email}');
+      debugPrint('Auth error message: ${error.message}');
+      debugPrint('Auth credential provider: ${error.credential?.providerId}');
       _showError(_authErrorMessage(error));
     } catch (error) {
+      debugPrint('Sign-in failed for $provider: $error');
       _showError('Authentication failed: $error');
     } finally {
       if (mounted) {
@@ -77,25 +91,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   String _authErrorMessage(FirebaseAuthException error) {
-    switch (error.code) {
-      case 'account-exists-with-different-credential':
-        return 'An account already exists with this email using another sign-in method.';
-      case 'cancelled-popup-request':
-      case 'popup-closed-by-user':
-        return 'Sign in was cancelled.';
-      case 'network-request-failed':
-        return 'Network error. Check your connection and try again.';
-      case 'operation-not-allowed':
-        return 'This sign-in method is not enabled in Firebase.';
-      case 'popup-blocked':
-        return 'The sign-in popup was blocked. Allow popups for this site and try again.';
-      case 'too-many-requests':
-        return 'Too many attempts. Please wait a moment and try again.';
-      case 'user-disabled':
-        return 'This account has been disabled.';
-      default:
-        return error.message ?? 'Authentication failed. Code: ${error.code}';
-    }
+    return error.code;
   }
 
   @override

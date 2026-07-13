@@ -27,8 +27,8 @@ mobileModule02
 Ex00:
 
 - 1. API : Add http to pubspec.yaml for Open-Meteo API calls.
-- 2. GPS : Add geolocator to pubspec.yamlfor phone GPS and runtime permission handling.
-- 3. permissions : Add <uses-permission> to AndroidManifest.xml
+- 2. GPS : Add geolocator to pubspec.yaml for a) phone GPS and b) runtime permission handling.
+- 3. permissions : Add <user-permission> to AndroidManifest.xml
         - So Android knows that the app may request location access.
         - import 'package:geolocator/geolocator.dart';
         - useGeoLocation()
@@ -79,12 +79,13 @@ Ex02:
 
 8) reverseGeocodeLocation() reverse-geocodes coordinates into city information
 
-9) Landing tab is "currently" - TabController - nitialIndex: 0
+9) Landing tab is "currently" - TabController - initialIndex: 0
 
 10) applySearchedLocation()- global “last searched coordinate” model. 
     so switching tabs keeps showing the last searched location’s data.
 
 11) showErrorMessage() - Shared error state wired into all tabs.
+
 
 mobileModule03
 --------------
@@ -98,7 +99,7 @@ So ensure, you copy/update the dependency list from the previous project’s pub
 
 Ex00:
 
-- in Widget suggestionTextRow() - highlight the search text
+- in Widget suggestionTextRow() - user may highlight the search text
 - in Widget buildCitySuggestions() - add Icons to search results - suggestionTextRow()
 
 Ex01:
@@ -124,6 +125,20 @@ Ex04:
 
 - WeeklyTemperatureChart / WeeklyTemperatureChartPainter() --> block 1
 - WeeklyForecastRow() --> block 2 
+
+Additional notes:
+    HourlyForecast class: 
+        A simple immutable data model class used to hold hourly weather information 
+        (hour, temperature, wind speed, and description).
+    Class properties: 
+        Declaring fields provides type safety, improves code clarity, 
+        enables better IDE support, and makes the object immutable using final.
+    CitySuggestion class: 
+        Uses a factory constructor named fromJson to create objects from JSON maps. 
+        The admin1 key from the API is mapped to the region property for better readability.
+    @override annotation: 
+        Used in shouldRepaint() to indicate the method is overriding the parent CustomPainter class. 
+        It determines whether the chart should be redrawn based on data changes for performance optimization.
 
 mobileModule04 
 --------------
@@ -240,7 +255,7 @@ ex01: Profile Page
     - Save failures show an error message on NewEntryPage
 
 
-mobileModule05 
+mobileModule05 - advanced_diary_app
 --------------
 GitHub login is configured at the Firebase project Auth provider level, not per Android package.
     - Both apps use the same Firebase project: diary-app-20745
@@ -248,8 +263,6 @@ GitHub login is configured at the Firebase project Auth provider level, not per 
 Google is different on Android because Google sign-in checks the Android app package and SHA certificate. 
     - That is why Module 05 needed its own Android registration and SHA setup.
     - refer to mobileModule04/Docs/firebase_auth_setup.md
-
-- advanced_diary_app
 
 - copied over lib, test, assets folder
 - merge pubspec.yaml (change name: advanced_diary_apps)

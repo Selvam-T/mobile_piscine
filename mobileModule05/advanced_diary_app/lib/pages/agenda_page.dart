@@ -228,10 +228,15 @@ class _AgendaPageState extends State<AgendaPage> {
 
         return SizedBox(
           height: listHeight,
-          child: Scrollbar(
+          child: RawScrollbar(
             controller: _entryListController,
             thumbVisibility: true,
             trackVisibility: true,
+            thickness: 8,
+            radius: const Radius.circular(999),
+            thumbColor: _diaryTeal.withValues(alpha: 0.85),
+            trackColor: Colors.transparent,
+            trackBorderColor: Colors.transparent,
             child: ListView.separated(
               controller: _entryListController,
               padding: EdgeInsets.zero,
